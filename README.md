@@ -4,8 +4,6 @@
 
 <h1>Matte</h1>
 
-<img src="docs/img/banner.png" alt="Matte: notifications you can actually read. Glass vs Matte notification card on ColorOS 17" width="100%">
-
 <p><b>Solid, readable notification cards for ColorOS 17. One tap, no root, fully reversible.</b></p>
 
 <a href="https://github.com/nathanrodrigues2111/matte/releases/latest"><img alt="Latest release" src="https://img.shields.io/github/v/release/nathanrodrigues2111/matte?label=release&color=4655d9"></a>
