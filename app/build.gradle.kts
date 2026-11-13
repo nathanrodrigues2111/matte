@@ -1,5 +1,14 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
+}
+
+// Release key lives outside the repo: ~/.config/matte/keystore.properties
+// (storeFile, storePassword, keyAlias, keyPassword). Without it, release falls back to the debug key.
+val keyProps = Properties().apply {
+    val f = file(System.getProperty("user.home") + "/.config/matte/keystore.properties")
+    if (f.exists()) f.inputStream().use { load(it) }
 }
 
 android {
@@ -10,12 +19,21 @@ android {
         applicationId = "com.lazyneil.matte"
         minSdk = 30
         targetSdk = 37
-        versionCode = 1
-        versionName = "1.0.0"
+        versionCode = 2
+        versionName = "0.1.1"
+    }
+    signingConfigs {
+        if (keyProps.isNotEmpty()) create("release") {
+            storeFile = file(keyProps.getProperty("storeFile"))
+            storePassword = keyProps.getProperty("storePassword")
+            keyAlias = keyProps.getProperty("keyAlias")
+            keyPassword = keyProps.getProperty("keyPassword")
+        }
     }
     buildTypes {
-        // Debug-signed release so it installs without a keystore. Use a real key before publishing to a store.
-        release { signingConfig = signingConfigs.getByName("debug") }
+        release {
+            signingConfig = signingConfigs.findByName("release") ?: signingConfigs.getByName("debug")
+        }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17

@@ -1,99 +1,118 @@
 <div align="center">
 
-# Matte
+<img src="docs/img/icon.png" alt="Matte app icon" width="120">
 
-**Solid, readable notifications for ColorOS 17. No root.**
+<h1>Matte</h1>
 
-Turns the frosted-glass notification cards on OnePlus, OPPO and realme phones into solid cards you can actually read.
+<img src="docs/img/banner.png" alt="Matte: notifications you can actually read. Glass vs Matte notification card on ColorOS 17" width="100%">
 
-![Platform](https://img.shields.io/badge/platform-Android-3ddc84)
-![ColorOS](https://img.shields.io/badge/ColorOS-17-1f6feb)
-![Root](https://img.shields.io/badge/root-not%20required-2ea043)
-![License](https://img.shields.io/badge/license-MIT-lightgrey)
+<p><b>Solid, readable notification cards for ColorOS 17. One tap, no root, fully reversible.</b></p>
 
-[Download](https://github.com/nathanrodrigues2111/matte/releases/latest) · [Website](https://nathanrodrigues2111.github.io/matte/) · [How it works](#how-it-works) · [FAQ](#faq)
+<a href="https://github.com/nathanrodrigues2111/matte/releases/latest"><img alt="Latest release" src="https://img.shields.io/github/v/release/nathanrodrigues2111/matte?label=release&color=4655d9"></a>
+<a href="https://github.com/nathanrodrigues2111/matte/releases"><img alt="Downloads" src="https://img.shields.io/github/downloads/nathanrodrigues2111/matte/total?color=4655d9"></a>
+<img alt="Platform Android" src="https://img.shields.io/badge/platform-Android-3ddc84">
+<img alt="ColorOS 17" src="https://img.shields.io/badge/ColorOS-17-1f6feb">
+<img alt="No root" src="https://img.shields.io/badge/root-not%20required-2ea043">
+<a href="LICENSE"><img alt="License MIT" src="https://img.shields.io/badge/license-MIT-lightgrey"></a>
+
+<p>
+<a href="https://nathanrodrigues2111.github.io/matte/"><b>Website</b></a> &nbsp;·&nbsp;
+<a href="https://github.com/nathanrodrigues2111/matte/releases/latest"><b>Download APK</b></a> &nbsp;·&nbsp;
+<a href="#how-it-works"><b>How it works</b></a>
+</p>
 
 </div>
 
-| Before: ColorOS 17 glass | After: Matte |
+## Before and after
+
+| ColorOS 17 glass | Matte |
 | :---: | :---: |
-| ![ColorOS 17 glass notification card, white text on light grey, hard to read](docs/img/glass.png) | ![Matte on: solid dark notification card with clear white text](docs/img/matte.png) |
+| <img src="docs/img/glass.png" alt="ColorOS 17 glass notification card, white text on light grey, hard to read" width="380"> | <img src="docs/img/matte.png" alt="Matte on: solid dark notification card with clear white text" width="380"> |
+
+Real screenshots from a OnePlus 15 on ColorOS 17.0.0.102.
+
+## Screenshots
+
+<p align="center">
+<img src="docs/img/app-1.png" alt="Matte main screen: Matte is on" width="250">
+<img src="docs/img/app-2.png" alt="Matte setup steps with Shizuku" width="250">
+<img src="docs/img/app-3.png" alt="Matte settings: re-apply after restart, test notification" width="250">
+</p>
 
 ## Why
 
-ColorOS 17 draws heads-up banners and notification shade cards as light grey frosted glass with white text. Over any light app the text all but disappears. No setting fixes it: Visual Blur, Allow window-level blurs, high contrast text and light mode were all tested and none change the cards.
-
-Matte flips a SystemUI switch so the cards are drawn solid: `#404040` in dark mode, `#fafafa` in light mode.
+ColorOS 17 draws heads-up banners and shade cards as light grey frosted glass with white text. Over light apps they are close to unreadable, and no setting fixes it. Matte makes the cards solid: `#404040` in dark mode, `#fafafa` in light mode.
 
 ## Quick start
 
-### Option A: Shizuku (on the phone)
+**On the phone, with Shizuku (recommended)**
 
 1. Install and start [Shizuku](https://shizuku.rikka.app/).
-2. Install Matte from [Releases](https://github.com/nathanrodrigues2111/matte/releases/latest) and grant it Shizuku access.
-3. Switch Matte on. Or add the **Matte** tile to Quick Settings.
+2. Install Matte from [Releases](https://github.com/nathanrodrigues2111/matte/releases/latest) and allow Shizuku access.
+3. Switch Matte on, or add the Matte tile to Quick Settings.
 
-Matte re-applies itself after a reboot as soon as Shizuku is running again.
+Matte turns itself back on after a reboot once Shizuku is running.
 
-### Option B: Computer (adb)
-
-Enable USB debugging, connect the phone, then:
+**From a computer, with adb**
 
 ```sh
-adb shell setprop debug.systemui.gaussblur_level 4 && adb shell am crash com.android.systemui
+adb shell setprop debug.systemui.gaussblur_level 4 && adb shell am crash com.android.systemui    # on
+adb shell setprop debug.systemui.gaussblur_level -1 && adb shell am crash com.android.systemui   # off
 ```
 
-To turn it off:
-
-```sh
-adb shell setprop debug.systemui.gaussblur_level -1 && adb shell am crash com.android.systemui
-```
-
-Or use the scripts in [`scripts/`](scripts):
-
-```sh
-./scripts/matte.sh on | off | status      # macOS, Linux
-scripts\matte.bat on | off | status       # Windows
-```
+Or use `scripts/matte.sh` (macOS, Linux) or `scripts\matte.bat` (Windows) with `on`, `off` or `status`.
 
 ## How it works
 
-ColorOS SystemUI has a debug override, `debug.systemui.gaussblur_level`. Level `4` selects the branch ColorOS uses on low-end phones that cannot afford blur, where cards are painted solid. Android lets the shell user (adb, or Shizuku) set `debug.*` properties, so no root is needed. SystemUI only reads the value at startup, which is why it is restarted right after.
+ColorOS SystemUI has a debug override, `debug.systemui.gaussblur_level`. Level `4` picks the branch ColorOS uses on low-end phones that skip blur, where cards are painted solid. The shell user (adb or Shizuku) may set `debug.*` properties, so no root is needed. SystemUI reads the value at startup, so it is restarted right after.
 
-Nothing is installed into the system and no files are modified. The value lives in memory until the phone restarts.
-
-Found by testing on a OnePlus 15 running ColorOS 17.0.0.102.
+Nothing is installed into the system and no files change. The value lives in memory until the phone restarts.
 
 <details>
 <summary><b>Why not something else?</b></summary>
 
-- **Overlays (fabricated RRO):** blocked for the shell on Android 16: `Non-root shell cannot fabricate overlays`.
-- **Custom themes:** the theme store does not load SystemUI colors for these cards.
-- **Root + LSPosed module** ([SANWU5/c17-statusbar](https://github.com/SANWU5/c17-statusbar)): works, but needs root.
+- **Overlays:** fabricated overlays are blocked for the shell on Android 16 (`Non-root shell cannot fabricate overlays`).
+- **Custom themes:** the theme engine does not load SystemUI colors for these cards.
+- **Root + LSPosed:** the [SANWU5/c17-statusbar](https://github.com/SANWU5/c17-statusbar) module works, but needs root.
 
 </details>
 
 ## FAQ
 
-**Does it survive a restart?**
-No. Sleep, lock and SystemUI restarts are fine, a full phone restart resets it. With Shizuku, Matte re-applies it once Shizuku is running. With adb, run the command again.
+<details>
+<summary><b>Does it survive a restart?</b></summary>
 
-**Is it safe?**
-It sets one debug property that SystemUI already supports and restarts the status bar. No root, no system files touched, fully reversible.
+No. Sleep, lock and SystemUI restarts are fine, a full phone restart resets it. With Shizuku, Matte re-applies it once Shizuku runs. With adb, run the command again.
+</details>
 
-**How do I undo it?**
-Switch it off in Matte, run the `-1` command above, or restart the phone.
+<details>
+<summary><b>Is it safe?</b></summary>
 
-**Any side effects?**
-Other SystemUI blur goes flat too: the shade background, Quick Settings and the volume panel. The status bar flickers for a few seconds when switching.
+It sets one debug property SystemUI already supports and restarts the status bar. No root, no system files touched, fully reversible.
+</details>
 
-**Which phones?**
+<details>
+<summary><b>How do I undo it?</b></summary>
+
+Switch it off in Matte, run the off command, or restart the phone.
+</details>
+
+<details>
+<summary><b>Any side effects?</b></summary>
+
+Other SystemUI blur goes flat too: shade background, Quick Settings, volume panel. The status bar flickers for a few seconds while switching.
+</details>
+
+<details>
+<summary><b>Which phones?</b></summary>
+
 ColorOS 17 on OnePlus, OPPO and realme. Other versions are untested.
+</details>
 
 ## Disclaimer
 
-Matte is not affiliated with, endorsed by, or sponsored by OPPO, OnePlus or realme. Use at your own risk.
+Not affiliated with, endorsed by, or sponsored by OPPO, OnePlus or realme. Use at your own risk.
 
 ## License
 
-MIT. See [LICENSE](LICENSE).
+[MIT](LICENSE)
