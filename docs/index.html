@@ -1,0 +1,397 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Matte for ColorOS 17</title>
+<meta name="description" content="Solid, readable notification cards on ColorOS 17. One tap with Shizuku or two adb commands. No root.">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="data:,">
+<style>
+:root{
+  --bg:#fbfbfd; --surface:#ffffff; --surface-2:#f3f4f8; --line:#e4e6ee; --text:#0e1017; --muted:#5b6070;
+  --accent:#4655d9; --accent-ink:#ffffff; --accent-soft:#eceefd; --code-bg:#0f1117; --code-text:#e6e8ef;
+  --shadow:0 1px 2px rgba(16,18,27,.05),0 8px 24px rgba(16,18,27,.06);
+  --font:ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,"JetBrains Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#0b0c10; --surface:#13151b; --surface-2:#1a1d25; --line:#262a35; --text:#eef0f5; --muted:#9aa0b1;
+  --accent:#8f9bff; --accent-ink:#0b0c10; --accent-soft:#1d2140; --code-bg:#0a0b0f; --code-text:#e6e8ef;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.35);
+}}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:72px}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.6 var(--font);-webkit-font-smoothing:antialiased}
+a{color:inherit}
+img{display:block;max-width:100%;height:auto}
+.wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+h1,h2,h3{margin:0;letter-spacing:-.025em;line-height:1.1}
+h2{font-size:clamp(28px,4vw,40px);font-weight:650}
+h3{font-size:18px;font-weight:600;letter-spacing:-.01em}
+p{margin:0}
+.muted{color:var(--muted)}
+.eyebrow{font-size:13px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--accent)}
+section{padding:96px 0;border-top:1px solid var(--line)}
+.head{max-width:640px;margin-bottom:48px}
+.head h2{margin:8px 0 16px}
+
+/* nav */
+nav{position:sticky;top:0;z-index:10;background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:saturate(1.4) blur(12px);-webkit-backdrop-filter:saturate(1.4) blur(12px);border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;align-items:center;gap:32px;height:56px}
+.brand{display:flex;align-items:center;gap:8px;font-weight:650;letter-spacing:-.02em;text-decoration:none}
+.logo{width:24px;height:24px;border-radius:7px;background:var(--text);position:relative}
+.logo::after{content:"";position:absolute;left:5px;right:5px;top:8px;height:8px;border-radius:3px;background:var(--bg)}
+nav .links{display:flex;gap:24px;margin-left:auto;font-size:14px}
+nav .links a{text-decoration:none;color:var(--muted)}
+nav .links a:hover{color:var(--text)}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;gap:8px;height:40px;padding:0 16px;border-radius:10px;font-size:15px;font-weight:550;text-decoration:none;border:1px solid var(--line);background:var(--surface);color:var(--text);cursor:pointer;transition:transform .18s ease-out,background .18s,box-shadow .18s}
+.btn:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(16,18,27,.12)}
+.btn:active{transform:none}
+.btn:hover{background:var(--surface-2)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.primary:hover{background:color-mix(in srgb,var(--accent) 88%,var(--text))}
+.btn.sm{height:32px;padding:0 12px;font-size:14px}
+.btn svg{width:16px;height:16px}
+
+/* hero */
+.hero{padding:88px 0 104px;display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center}
+.pill{display:inline-flex;align-items:center;gap:8px;height:28px;padding:0 12px;border:1px solid var(--line);border-radius:999px;font-size:13px;color:var(--muted);background:var(--surface)}
+.pill b{width:6px;height:6px;border-radius:50%;background:#2fb36b}
+.hero h1{font-size:clamp(40px,6.4vw,68px);font-weight:700;letter-spacing:-.045em;margin:24px 0}
+.hero p.lead{font-size:clamp(17px,1.8vw,20px);color:var(--muted);max-width:520px}
+.cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:32px}
+.meta{display:flex;flex-wrap:wrap;gap:8px 24px;margin-top:32px;font-size:14px;color:var(--muted)}
+.meta span{display:inline-flex;align-items:center;gap:8px}
+.meta svg{width:16px;height:16px;color:var(--accent)}
+
+/* phone: plain frame, real screenshots, calm crossfade */
+.stage{justify-self:center;display:grid;justify-items:center;gap:16px;animation:rise .6s cubic-bezier(.2,.7,.2,1) .2s both}
+.phone{width:400px;max-width:100%;padding:8px 8px 0;border-radius:52px 52px 0 0;background:#1b1c21;box-shadow:inset 0 0 0 1.5px #3a3c45,0 24px 48px -20px rgba(16,18,27,.35);-webkit-mask-image:linear-gradient(#000 78%,transparent);mask-image:linear-gradient(#000 78%,transparent)}
+.screen{position:relative;border-radius:44px 44px 0 0;overflow:hidden;background:#fff}
+.screen img{width:100%}
+.screen .g{position:absolute;inset:0;animation:fade 8s ease-in-out infinite}
+@keyframes fade{0%,40%,100%{opacity:1}50%,90%{opacity:0}}
+.chip{display:grid;height:28px;min-width:88px;padding:0 12px;border:1px solid var(--line);border-radius:999px;background:var(--surface);font-size:13px;font-weight:600}
+.chip span{grid-area:1/1;display:flex;align-items:center;justify-content:center;gap:8px}
+.chip i{width:8px;height:8px;border-radius:50%}
+.chip .cg{animation:fade 8s ease-in-out infinite}.chip .cg i{background:#b9bcc6}
+.chip .cm{animation:fade 8s ease-in-out infinite reverse}.chip .cm i{background:var(--accent)}
+@keyframes rise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.hero .pill,.hero h1,.hero .lead,.hero .cta,.hero .meta{animation:rise .55s cubic-bezier(.2,.7,.2,1) both}
+.hero h1{animation-delay:.06s}.hero .lead{animation-delay:.12s}.hero .cta{animation-delay:.18s}.hero .meta{animation-delay:.24s}
+.js .reveal{opacity:0;transform:translateY(12px);transition:opacity .5s ease-out,transform .5s ease-out}
+.js .reveal.in{opacity:1;transform:none}
+.copy .ok path{stroke-dasharray:24;stroke-dashoffset:24;animation:draw .3s ease-out forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+
+/* compare */
+.compare{position:relative;max-width:420px;margin:0 auto;border:1px solid var(--line);border-radius:28px;overflow:hidden;background:#fff;box-shadow:var(--shadow);--pos:50%}
+.compare img{width:100%;user-select:none;pointer-events:none}
+.compare .top{position:absolute;inset:0;clip-path:inset(0 calc(100% - var(--pos)) 0 0)}
+.compare .bar{position:absolute;top:0;bottom:0;left:var(--pos);width:1.5px;margin-left:-.75px;background:var(--accent);pointer-events:none}
+.compare .bar::after{content:"";position:absolute;top:50%;left:50%;width:18px;height:18px;margin:-9px 0 0 -9px;border-radius:50%;background:#fff;border:1.5px solid var(--accent);box-shadow:0 1px 4px rgba(0,0,0,.2)}
+.compare input{position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:ew-resize}
+.compare input:focus-visible~.bar::after{outline:3px solid color-mix(in srgb,var(--accent) 40%,transparent);outline-offset:2px}
+.chips{max-width:420px;margin:16px auto 0;display:flex;justify-content:space-between;gap:8px}
+.chips span{display:inline-flex;align-items:center;gap:8px;height:28px;padding:0 12px;border:1px solid var(--line);border-radius:999px;background:var(--surface);font-size:13px;font-weight:600}
+.chips i{width:8px;height:8px;border-radius:50%;background:#b9bcc6}.chips span+span i{background:var(--accent)}
+.note{max-width:420px;margin:12px auto 0;text-align:center;font-size:13px;color:var(--muted)}
+
+/* grid */
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:24px;transition:transform .2s ease-out,box-shadow .2s,border-color .2s}
+.grid .card:hover,.method:hover{transform:translateY(-2px);box-shadow:var(--shadow);border-color:color-mix(in srgb,var(--accent) 25%,var(--line))}
+.icon{width:40px;height:40px;border-radius:10px;display:grid;place-items:center;background:var(--accent-soft);color:var(--accent);margin-bottom:16px}
+.icon svg{width:20px;height:20px}
+.card p{margin-top:8px;color:var(--muted);font-size:15px}
+
+/* methods */
+.methods{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.method{min-width:0;display:flex;flex-direction:column;gap:16px;padding:32px;box-shadow:var(--shadow)}
+.method header{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.badge{font-size:12px;font-weight:600;padding:4px 10px;border-radius:999px;background:var(--accent-soft);color:var(--accent);white-space:nowrap}
+.method ol{margin:0;padding-left:20px;color:var(--muted);font-size:15px;display:grid;gap:8px}
+.method ol b{color:var(--text);font-weight:550}
+.method .foot{margin-top:auto;padding-top:8px;display:flex;flex-wrap:wrap;gap:8px}
+
+/* code */
+.code{position:relative;background:var(--code-bg);color:var(--code-text);border-radius:12px;border:1px solid var(--line)}
+.code .lbl{display:flex;align-items:center;justify-content:space-between;padding:8px 8px 8px 16px;border-bottom:1px solid rgba(255,255,255,.08);font-size:12px;color:#8b90a0;font-family:var(--mono)}
+.code pre{margin:0;padding:16px;overflow-x:auto;font:13.5px/1.7 var(--mono)}
+.code pre .p{color:#6b7184;user-select:none}
+.copy{height:28px;padding:0 10px;border-radius:8px;border:1px solid rgba(255,255,255,.12);background:transparent;color:#c9ccd6;font:500 12px var(--font);cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.copy:hover{background:rgba(255,255,255,.08)}
+.copy svg{width:14px;height:14px}
+
+/* how */
+.how{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start}
+.how p+p{margin-top:16px}
+.how code{font:14px var(--mono);background:var(--surface-2);border:1px solid var(--line);padding:1px 6px;border-radius:6px}
+.list{display:grid;gap:12px;margin:0;padding:0;list-style:none}
+.list li{padding:16px 20px;border:1px solid var(--line);border-radius:12px;background:var(--surface);font-size:15px;color:var(--muted)}
+.list b{display:block;color:var(--text);font-weight:600;margin-bottom:4px}
+
+/* faq */
+.faq{max-width:760px}
+details{border-bottom:1px solid var(--line)}
+summary{list-style:none;cursor:pointer;padding:20px 0;font-weight:600;font-size:17px;display:flex;justify-content:space-between;gap:16px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";font-weight:400;font-size:22px;line-height:1;color:var(--muted);transition:transform .2s}
+details[open] summary::after{transform:rotate(45deg)}
+:root{interpolate-size:allow-keywords}
+details::details-content{height:0;opacity:0;overflow:clip;transition:height .25s ease,opacity .25s ease,content-visibility .25s allow-discrete}
+details[open]::details-content{height:auto;opacity:1}
+details p{padding:0 0 24px;color:var(--muted);max-width:640px}
+
+footer{border-top:1px solid var(--line);padding:40px 0 56px;font-size:14px;color:var(--muted)}
+footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px}
+footer a{color:var(--muted)}
+
+@media (max-width:900px){
+  .hero{grid-template-columns:1fr;padding:64px 0 80px;gap:56px}
+  .grid{grid-template-columns:1fr 1fr}
+  .methods,.how{grid-template-columns:1fr}
+  .how{gap:32px}
+}
+@media (max-width:600px){
+  .wrap{padding:0 16px}
+  section{padding:72px 0}
+  nav .links a:not(.keep){display:none}
+  .grid{grid-template-columns:1fr}
+  .method{padding:24px}
+  .phone{width:320px}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{transition:none!important;animation:none!important}.js .reveal{opacity:1;transform:none}.screen .g,.chip .cg{opacity:0}}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a class="brand" href="#"><span class="logo" aria-hidden="true"></span>Matte</a>
+    <div class="links">
+      <a href="#compare">Before and after</a>
+      <a href="#install">Install</a>
+      <a href="#how">How it works</a>
+      <a href="#faq">FAQ</a>
+      <a class="keep" id="gh" href="#">GitHub</a>
+    </div>
+  </div>
+</nav>
+
+<main class="wrap">
+  <header class="hero">
+    <div>
+      <span class="pill"><b></b>For ColorOS 17 on OnePlus, OPPO, realme</span>
+      <h1>Notifications you can actually read.</h1>
+      <p class="lead">ColorOS 17 draws notification cards as pale frosted glass with white text. Matte makes them solid. One tap, no root, fully reversible.</p>
+      <div class="cta">
+        <a class="btn primary dl" href="https://github.com/nathanrodrigues2111/matte/releases/latest">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v12m0 0-5-5m5 5 5-5M5 20h14"/></svg>
+          Download APK
+        </a>
+        <a class="btn" href="#install">Use adb instead</a>
+      </div>
+      <div class="meta">
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>No root</span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Nothing installed into the system</span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Open source</span>
+      </div>
+    </div>
+    <div class="stage">
+      <div class="phone">
+        <div class="screen">
+          <img src="img/matte.png" width="1272" height="960" alt="ColorOS 17 heads-up notification with Matte on: solid dark card, clear white text">
+          <img class="g" src="img/glass.png" width="1272" height="960" alt="" aria-hidden="true">
+        </div>
+      </div>
+      <div class="chip" aria-hidden="true"><span class="cg"><i></i>Glass</span><span class="cm"><i></i>Matte</span></div>
+    </div>
+  </header>
+
+  <section id="compare">
+    <div class="head">
+      <div class="eyebrow">Before and after</div>
+      <h2>Same banner. Same app. Readable.</h2>
+      <p class="muted">Real screenshots from a OnePlus 15 on ColorOS 17, over a white screen. Drag to compare.</p>
+    </div>
+    <div class="compare" id="cmp">
+      <img src="img/matte.png" width="1272" height="960" alt="After: Matte on, solid notification card with readable text">
+      <div class="top"><img src="img/glass.png" width="1272" height="960" alt="Before: ColorOS 17 glass notification card, white text on light grey"></div>
+      <input type="range" min="0" max="100" value="50" aria-label="Compare glass and Matte">
+      <span class="bar"></span>
+    </div>
+    <div class="chips"><span><i></i>Glass</span><span><i></i>Matte</span></div>
+    <p class="note">Solid #404040 in dark mode, #fafafa in light mode.</p>
+  </section>
+
+  <section>
+    <div class="head">
+      <div class="eyebrow">Why Matte</div>
+      <h2>No setting fixes this. Matte does.</h2>
+      <p class="muted">Visual Blur, window-level blurs, high contrast text, light mode. All tested, none change the cards.</p>
+    </div>
+    <div class="grid">
+      <div class="card">
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="10" rx="3"/><path d="M7 12h6"/></svg></div>
+        <h3>Solid cards</h3>
+        <p>Heads-up banners and shade cards get an opaque background with full-contrast text.</p>
+      </div>
+      <div class="card">
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6z"/></svg></div>
+        <h3>No root</h3>
+        <p>Uses a SystemUI debug switch the shell is allowed to set. No bootloader unlock, no Magisk.</p>
+      </div>
+      <div class="card">
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12a8 8 0 1 0 2.3-5.7M4 4v4h4"/></svg></div>
+        <h3>Fully reversible</h3>
+        <p>Switch off any time. A phone restart also clears it. No system files are touched.</p>
+      </div>
+      <div class="card">
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/></svg></div>
+        <h3>Quick Settings tile</h3>
+        <p>Toggle from the shade without opening the app.</p>
+      </div>
+      <div class="card">
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 3L5 13h6l-1 8 8-10h-6z"/></svg></div>
+        <h3>Re-applies after reboot</h3>
+        <p>With Shizuku, Matte turns itself back on once Shizuku is running again.</p>
+      </div>
+      <div class="card">
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></svg></div>
+        <h3>Works from a computer</h3>
+        <p>Prefer no app at all? Two adb commands, or the bundled scripts.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="install">
+    <div class="head">
+      <div class="eyebrow">Install</div>
+      <h2>Two ways in.</h2>
+      <p class="muted">Pick one. Both set the same switch.</p>
+    </div>
+    <div class="methods">
+      <div class="card method">
+        <header><h3>Shizuku</h3><span class="badge">Recommended</span></header>
+        <p class="muted">One-tap toggle on the phone, plus a Quick Settings tile.</p>
+        <ol>
+          <li>Install and start <b>Shizuku</b>.</li>
+          <li>Install <b>Matte</b> and grant it Shizuku access.</li>
+          <li>Switch Matte on. Add the tile if you like.</li>
+        </ol>
+        <div class="foot">
+          <a class="btn primary sm dl" href="https://github.com/nathanrodrigues2111/matte/releases/latest">Download APK</a>
+          <a class="btn sm" href="https://shizuku.rikka.app/" rel="noopener">Get Shizuku</a>
+        </div>
+      </div>
+      <div class="card method">
+        <header><h3>Computer</h3><span class="badge">No app</span></header>
+        <p class="muted">Enable USB debugging, connect the phone, run:</p>
+        <div class="code">
+          <div class="lbl">Turn on<button class="copy" type="button" data-copy="adb shell setprop debug.systemui.gaussblur_level 4 &amp;&amp; adb shell am crash com.android.systemui"></button></div>
+          <pre><span class="p">$ </span>adb shell setprop debug.systemui.gaussblur_level 4
+<span class="p">$ </span>adb shell am crash com.android.systemui</pre>
+        </div>
+        <div class="code">
+          <div class="lbl">Turn off<button class="copy" type="button" data-copy="adb shell setprop debug.systemui.gaussblur_level -1 &amp;&amp; adb shell am crash com.android.systemui"></button></div>
+          <pre><span class="p">$ </span>adb shell setprop debug.systemui.gaussblur_level -1
+<span class="p">$ </span>adb shell am crash com.android.systemui</pre>
+        </div>
+        <p class="muted" style="font-size:14px">Or use <code style="font-family:var(--mono)">scripts/matte.sh</code> / <code style="font-family:var(--mono)">matte.bat</code> with <code style="font-family:var(--mono)">on</code>, <code style="font-family:var(--mono)">off</code>, <code style="font-family:var(--mono)">status</code>.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="how">
+    <div class="how">
+      <div>
+        <div class="eyebrow">How it works</div>
+        <h2 style="margin:8px 0 24px">One debug switch, already built in.</h2>
+        <p class="muted">ColorOS SystemUI reads <code>debug.systemui.gaussblur_level</code> at startup. Level <code>4</code> selects the branch ColorOS ships for low-end phones that skip blur, where cards are painted solid.</p>
+        <p class="muted">Android lets the shell user set <code>debug.*</code> properties, so adb or Shizuku can flip it without root. SystemUI is then restarted to pick it up. The value lives in memory until the phone restarts.</p>
+        <p class="muted">Side effect: the shade background, Quick Settings and volume panel lose their blur too.</p>
+      </div>
+      <div>
+        <h3 style="margin:8px 0 16px">Why not something else</h3>
+        <ul class="list">
+          <li><b>Overlays</b>Fabricated overlays are blocked for the shell on Android 16: "Non-root shell cannot fabricate overlays".</li>
+          <li><b>Custom themes</b>The theme engine does not load SystemUI colors for these cards.</li>
+          <li><b>Root + LSPosed</b>The <a href="https://github.com/SANWU5/c17-statusbar" rel="noopener">c17-statusbar</a> module works, but needs root.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="faq">
+    <div class="head">
+      <div class="eyebrow">FAQ</div>
+      <h2>Questions.</h2>
+    </div>
+    <div class="faq">
+      <details><summary>Does it survive a restart?</summary><p>No. Sleep, lock and SystemUI restarts are fine. A full phone restart resets it. With Shizuku, Matte re-applies it once Shizuku is running. With adb, run the command again.</p></details>
+      <details><summary>Is it safe?</summary><p>It sets one debug property SystemUI already supports and restarts the status bar. No root, nothing written to the system, fully reversible.</p></details>
+      <details><summary>How do I undo it?</summary><p>Switch it off in Matte, run the turn-off command, or restart the phone.</p></details>
+      <details><summary>Are there side effects?</summary><p>Other SystemUI blur goes flat too: shade background, Quick Settings, volume panel. The status bar flickers for a few seconds while switching.</p></details>
+      <details><summary>Which phones are supported?</summary><p>ColorOS 17 on OnePlus, OPPO and realme. Verified on a OnePlus 15 with ColorOS 17.0.0.102. Other versions are untested.</p></details>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>Matte is not affiliated with OPPO, OnePlus or realme. Use at your own risk.</span>
+    <span>MIT License · <a id="gh2" href="#">Source on GitHub</a></span>
+  </div>
+</footer>
+
+<script>
+const REPO_URL = "https://github.com/nathanrodrigues2111/matte";
+document.getElementById("gh").href = document.getElementById("gh2").href = REPO_URL;
+document.querySelectorAll(".dl").forEach(a => a.href = REPO_URL + "/releases/latest");
+
+const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const cmp = document.getElementById("cmp"), range = cmp.querySelector("input");
+const setPos = v => { range.value = v; cmp.style.setProperty("--pos", v + "%"); };
+let touched = false;
+range.addEventListener("input", () => { touched = true; setPos(range.value); });
+
+// One gentle sweep 50 > 75 > 25 > 50 when the slider first enters view.
+function sweep() {
+  const t0 = performance.now(), d = 1800;
+  (function f(t) {
+    if (touched) return;
+    const k = Math.min((t - t0) / d, 1);
+    setPos((50 + 25 * Math.sin(k * 2 * Math.PI) * (1 - k * 0.2)).toFixed(1));
+    k < 1 ? requestAnimationFrame(f) : setPos(50);
+  })(t0);
+}
+
+if (!still && "IntersectionObserver" in window) {
+  document.documentElement.classList.add("js");
+  const els = document.querySelectorAll("section .head, .compare, .chips, .note, .grid .card, .method, .how > div, .faq");
+  els.forEach(e => e.classList.add("reveal"));
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (!e.isIntersecting) return;
+    e.target.classList.add("in"); io.unobserve(e.target);
+    e.target.addEventListener("transitionend", () => e.target.classList.remove("reveal", "in"), { once: true });
+    if (e.target === cmp) setTimeout(sweep, 450);
+  }), { threshold: 0.15, rootMargin: "0px 0px -40px 0px" });
+  els.forEach(e => io.observe(e));
+}
+
+const copyIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a1 1 0 0 1 1-1h9"/></svg>';
+document.querySelectorAll(".copy").forEach(b => {
+  b.innerHTML = copyIcon + "Copy";
+  b.addEventListener("click", async () => {
+    try { await navigator.clipboard.writeText(b.dataset.copy); b.innerHTML = '<svg class="ok" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Copied'; }
+    catch { b.textContent = "Select and copy"; }
+    setTimeout(() => b.innerHTML = copyIcon + "Copy", 1600);
+  });
+});
+</script>
+</body>
+</html>

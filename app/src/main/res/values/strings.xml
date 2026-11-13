@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Matte</string>
+    <string name="subtitle">for ColorOS 17</string>
+    <string name="tagline">Solid, readable notifications. No more glass.</string>
+    <string name="tile_label">Matte</string>
+    <string name="description">Matte makes notification cards solid instead of see-through glass on ColorOS 17 phones (OnePlus, OPPO, realme). Switch it with one tap using Shizuku, or with two commands from a computer.</string>
+</resources>
