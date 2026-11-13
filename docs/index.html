@@ -166,6 +166,10 @@ nav .links a:hover{color:var(--text)}
 .list{display:grid;gap:12px;margin:0;padding:0;list-style:none}
 .list li{padding:16px 20px;border:1px solid var(--line);border-radius:12px;background:var(--surface);font-size:15px;color:var(--muted)}
 .list b{display:block;color:var(--text);font-weight:600;margin-bottom:4px}
+.steps{counter-reset:s;list-style:none;margin:16px 0;padding:0;display:grid;gap:12px}
+.steps li{counter-increment:s;position:relative;padding-left:44px;color:var(--muted);font-size:15px;line-height:1.55}
+.steps li::before{content:counter(s);position:absolute;left:0;top:0;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-size:13px;font-weight:600;color:var(--text);border:1px solid var(--line);background:var(--surface)}
+.steps b{color:var(--text);font-weight:600}
 
 /* faq */
 .faq{max-width:760px}
@@ -374,9 +378,13 @@ footer a{color:var(--muted)}
       <div>
         <div class="eyebrow">How it works</div>
         <h2 style="margin:8px 0 24px">One debug switch, already built in.</h2>
-        <p class="muted">ColorOS SystemUI reads <code>debug.systemui.gaussblur_level</code> at startup. Level <code>4</code> selects the branch ColorOS ships for low-end phones that skip blur, where cards are painted solid.</p>
-        <p class="muted">Android lets the shell user set <code>debug.*</code> properties, so adb or Shizuku can flip it without root. SystemUI is then restarted to pick it up. The value lives in memory until the phone restarts.</p>
-        <p class="muted">Side effect: the shade background, Quick Settings and volume panel lose their blur too.</p>
+        <p class="muted">ColorOS 17 gives powerful phones frosted glass and low-end phones a solid, blur-free look. Matte asks SystemUI to use the low-end look on your phone.</p>
+        <ol class="steps">
+          <li><b>Set the override.</b> SystemUI checks <code>debug.systemui.gaussblur_level</code> before its normal blur level. The shell user (adb, or Shizuku) may set <code>debug.*</code> properties, so no root is needed. Matte sets it to <code>4</code>.</li>
+          <li><b>Restart SystemUI.</b> The level is only read at startup, so Matte restarts SystemUI. The screen flickers for a few seconds.</li>
+          <li><b>Solid cards.</b> Banners and shade cards come back painted solid, <code>#404040</code> in dark mode and <code>#fafafa</code> in light mode.</li>
+        </ol>
+        <p class="muted">Off sets it back to <code>-1</code>. The value lives in memory, so a phone restart clears it. Side effect: the shade background, Quick Settings and volume panel lose their blur too.</p>
       </div>
       <div>
         <h3 style="margin:8px 0 16px">Why not something else</h3>

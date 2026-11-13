@@ -62,9 +62,25 @@ Or use `scripts/matte.sh` (macOS, Linux) or `scripts\matte.bat` (Windows) with `
 
 ## How it works
 
-ColorOS SystemUI has a debug override, `debug.systemui.gaussblur_level`. Level `4` picks the branch ColorOS uses on low-end phones that skip blur, where cards are painted solid. The shell user (adb or Shizuku) may set `debug.*` properties, so no root is needed. SystemUI reads the value at startup, so it is restarted right after.
+ColorOS 17 picks a blur level for SystemUI (the status bar, notification shade and heads-up banners) based on how powerful the phone is. High-end phones get the frosted glass. Low-end phones get level `4`, which skips blur and paints notification cards solid. Matte asks SystemUI to use that low-end look on your phone.
 
-Nothing is installed into the system and no files change. The value lives in memory until the phone restarts.
+```mermaid
+flowchart LR
+    A[Matte or adb] -->|setprop debug.systemui.gaussblur_level 4| B[System property in memory]
+    A -->|am crash com.android.systemui| C[SystemUI restarts]
+    B --> C
+    C -->|reads level 4 at startup| D[Solid notification cards]
+```
+
+1. **Set the override.** SystemUI checks a debug property, `debug.systemui.gaussblur_level`, before its normal blur level. Android lets the shell user (adb, or Shizuku acting as adb) set any `debug.*` property, so no root is needed.
+2. **Restart SystemUI.** SystemUI only reads the level when it starts, so Matte restarts it. The screen flickers for a few seconds and Android brings SystemUI straight back.
+3. **Solid cards.** With level `4`, banners and shade cards are painted solid: `#404040` in dark mode, `#fafafa` in light mode, with full-contrast text.
+
+Turning Matte off sets the property back to `-1` (no override) and restarts SystemUI again.
+
+Nothing is installed into the system and no files change. The value lives in memory only, so a phone restart clears it. That is also why Matte needs to re-apply after every reboot.
+
+The level logic lives in SystemUI's `ScrimUtil`, found by decompiling SystemUI on a OnePlus 15 running ColorOS 17.0.0.102.
 
 <details>
 <summary><b>Why not something else?</b></summary>
