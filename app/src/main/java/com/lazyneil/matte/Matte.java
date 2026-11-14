@@ -18,6 +18,16 @@ final class Matte {
     static final String PROP = "debug.systemui.gaussblur_level";
     static final String SHIZUKU = "moe.shizuku.privileged.api";
     static final int ON = 4, OFF = -1;
+    // Experimental, seen on a OnePlus 15, ColorOS 17.0.0.102: 5, 4 and 3 all keep pop-ups solid and change
+    // the notification bar background. -1 to 2 are stock glass; 6 breaks the shade, so it is not offered.
+    static final int[] LEVELS = {5, 4, 3};
+    static final String[] LOOKS = {"Light", "Default", "Dark"};
+
+    static int level(Context c) {
+        int l = prefs(c).getInt("barLevel", ON);
+        for (int x : LEVELS) if (x == l) return l;
+        return ON;
+    }
 
     static SharedPreferences prefs(Context c) { return c.getSharedPreferences("matte", 0); }
 
@@ -31,7 +41,11 @@ final class Matte {
         } catch (Exception e) { return ""; }
     }
 
-    static boolean isOn() { return getprop(PROP).equals(String.valueOf(ON)); }
+    static boolean isOn() {
+        String v = getprop(PROP);
+        for (int x : LEVELS) if (v.equals(String.valueOf(x))) return true;
+        return false;
+    }
 
     static boolean installed(Context c) {
         try { c.getPackageManager().getPackageInfo(SHIZUKU, 0); return true; }
@@ -67,7 +81,7 @@ final class Matte {
     // Blocking: call off the main thread. Returns true if the property now holds the wanted value.
     static synchronized boolean apply(Context c, boolean on) {
         try {
-            sh("setprop " + PROP + " " + (on ? ON : OFF) + " && am crash com.android.systemui");
+            sh("setprop " + PROP + " " + (on ? level(c) : OFF) + " && am crash com.android.systemui");
         } catch (Exception e) { return false; }
         boolean ok = isOn() == on;
         if (ok) prefs(c).edit().putBoolean("on", on).putLong("since", on ? System.currentTimeMillis() : 0)

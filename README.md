@@ -138,6 +138,12 @@ The first command of each pair turns Matte on, the second goes back to glass. Th
 </details>
 
 <details>
+<summary><b>What is the Experimental slider?</b></summary>
+
+With Shizuku, the app has an Experimental section with a "Notification bar" slider: Light, Default or Dark. It changes how see-through the pulled-down notification bar is. Pop-ups stay solid at every setting. Default is the normal Matte look. Each change restarts the status bar, so give it a few seconds between changes.
+</details>
+
+<details>
 <summary><b>How do I undo it?</b></summary>
 
 Switch it off in Matte, run the off command, or restart the phone.

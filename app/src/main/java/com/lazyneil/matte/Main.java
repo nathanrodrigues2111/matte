@@ -44,6 +44,7 @@ import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.color.MaterialColors;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.materialswitch.MaterialSwitch;
+import com.google.android.material.slider.Slider;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.transition.MaterialSharedAxis;
 
@@ -226,6 +227,7 @@ public class Main extends AppCompatActivity {
             if (shizuku()) shizukuSetup(); else computerSetup();
             if (shizuku()) afterRestart();
             tryIt();
+            if (shizuku()) experimental();
             settings();
         });
     }
@@ -284,6 +286,59 @@ public class Main extends AppCompatActivity {
                 sw.setEnabled(Matte.ready() && !busy);
             }
         });
+    }
+
+    long lastLook;
+
+    // Experimental: SystemUI blur level also changes the pulled-down notification bar background.
+    // Pop-up banners stay solid at every level. Applies on release, since each change restarts SystemUI.
+    // Changes within 15 s of the last one are saved but not applied: rapid SystemUI restarts can make Android reboot the phone.
+    void experimental() {
+        section("Experimental");
+        LinearLayout c = (LinearLayout) card().getChildAt(0);
+        LinearLayout box = column();
+        box.setPadding(dp(16), dp(16), dp(16), dp(8));
+        TextView label = text("", TITLE_L);
+        TextView sub = text("Changes how see-through the pulled-down notification bar is. Pop-ups stay solid. "
+                + "Works while Matte is on. The screen flickers on each change.", BODY);
+        sub.setTextColor(color(com.google.android.material.R.attr.colorOnSurfaceVariant));
+        sub.setPadding(0, dp(4), 0, dp(8));
+        box.addView(label);
+        box.addView(sub);
+        Slider s = new Slider(this);
+        s.setValueFrom(0);
+        s.setValueTo(Matte.LEVELS.length - 1);
+        s.setStepSize(1);
+        int cur = 0;
+        for (int i = 0; i < Matte.LEVELS.length; i++) if (Matte.LEVELS[i] == Matte.level(this)) cur = i;
+        s.setValue(cur);
+        s.setLabelFormatter(v -> Matte.LOOKS[(int) v]);
+        label.setText("Notification bar: " + Matte.LOOKS[cur]);
+        s.addOnChangeListener((sl, v, user) -> label.setText("Notification bar: " + Matte.LOOKS[(int) v]));
+        s.addOnSliderTouchListener(new Slider.OnSliderTouchListener() {
+            @Override public void onStartTrackingTouch(Slider sl) {}
+            @Override public void onStopTrackingTouch(Slider sl) {
+                int l = Matte.LEVELS[(int) sl.getValue()];
+                if (l == Matte.level(Main.this)) return;
+                Matte.prefs(Main.this).edit().putInt("barLevel", l).apply();
+                if (!Matte.isOn() || !Matte.ready()) return;
+                long now = System.currentTimeMillis();
+                if (now - lastLook < 15000) { snack("Saved. Wait a few seconds, then move it again to apply."); return; }
+                lastLook = now;
+                toggle(true);
+            }
+        });
+        box.addView(s);
+        LinearLayout ends = new LinearLayout(this);
+        TextView a = text("More see-through", BODY), b = text("Less", BODY);
+        a.setTextColor(color(com.google.android.material.R.attr.colorOnSurfaceVariant));
+        b.setTextColor(color(com.google.android.material.R.attr.colorOnSurfaceVariant));
+        b.setGravity(Gravity.END);
+        ends.addView(a, new LinearLayout.LayoutParams(0, -2, 1));
+        ends.addView(b, new LinearLayout.LayoutParams(0, -2, 1));
+        box.addView(ends);
+        c.addView(box);
+        updaters.add(() -> s.setEnabled(!busy));
     }
 
     // Settings-style main switch bar: a pill that fills with the accent when on.
