@@ -415,12 +415,12 @@ footer a{color:var(--muted)}
           <li><p>List the connections:</p>
             <div class="code"><div class="lbl">Terminal<button class="copy" type="button" data-copy="adb devices"></button></div><pre><span class="p">$ </span>adb devices</pre></div>
             <p>You see something like:</p>
-            <div class="code"><pre>192.168.0.161:33603                                 device
-adb-3C15CD007VR00000-ztbrG4._adb-tls-connect._tcp   device</pre></div></li>
-          <li><p>Copy the first column of one line. This is the serial, for example <code>192.168.0.161:33603</code>.</p></li>
+            <div class="code"><pre>192.168.1.23:37099                                 device
+adb-R5CX1234ABC-a1B2c3._adb-tls-connect._tcp   device</pre></div></li>
+          <li><p>Copy the first column of one line. This is the serial, for example <code>192.168.1.23:37099</code>.</p></li>
           <li><p>Run the commands with <code>-s</code> and your serial right after <code>adb</code>:</p>
-            <div class="code"><div class="lbl">Turn on<button class="copy" type="button" data-copy="adb -s 192.168.0.161:33603 shell setprop debug.systemui.gaussblur_level 4 &amp;&amp; adb -s 192.168.0.161:33603 shell am crash com.android.systemui"></button></div><pre><span class="p">$ </span>adb -s 192.168.0.161:33603 shell setprop debug.systemui.gaussblur_level 4
-<span class="p">$ </span>adb -s 192.168.0.161:33603 shell am crash com.android.systemui</pre></div>
+            <div class="code"><div class="lbl">Turn on<button class="copy" type="button" data-copy="adb -s 192.168.1.23:37099 shell setprop debug.systemui.gaussblur_level 4 &amp;&amp; adb -s 192.168.1.23:37099 shell am crash com.android.systemui"></button></div><pre><span class="p">$ </span>adb -s 192.168.1.23:37099 shell setprop debug.systemui.gaussblur_level 4
+<span class="p">$ </span>adb -s 192.168.1.23:37099 shell am crash com.android.systemui</pre></div>
             <p>To go back to glass, use <code>-1</code> instead of <code>4</code> in the first command.</p></li>
         </ol>
         <p>The serial changes after a phone restart or a Wi-Fi reconnect. If you get the error again, start over from step 1. The <code>matte.sh</code> and <code>matte.bat</code> scripts pick the first phone by themselves.</p>

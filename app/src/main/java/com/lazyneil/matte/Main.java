@@ -350,10 +350,10 @@ public class Main extends AppCompatActivity {
         expandable(c, "\"More than one device\" error?", "adb sees more than one connection. With wireless debugging "
                 + "this is usually the same phone listed twice.\n\n"
                 + "1. On the computer, run: adb devices\n\n"
-                + "2. Copy the first column of one line. This is the serial, for example 192.168.0.161:33603.\n\n"
+                + "2. Copy the first column of one line. This is the serial, for example 192.168.1.23:37099.\n\n"
                 + "3. Run the commands with -s and your serial right after adb:\n"
-                + "adb -s 192.168.0.161:33603 shell setprop debug.systemui.gaussblur_level 4\n"
-                + "adb -s 192.168.0.161:33603 shell am crash com.android.systemui\n\n"
+                + "adb -s 192.168.1.23:37099 shell setprop debug.systemui.gaussblur_level 4\n"
+                + "adb -s 192.168.1.23:37099 shell am crash com.android.systemui\n\n"
                 + "To go back to glass, use -1 instead of 4.\n\n"
                 + "The serial changes after a restart or Wi-Fi reconnect. If the error comes back, start from step 1. "
                 + "The matte.sh and matte.bat scripts pick the first phone by themselves.");

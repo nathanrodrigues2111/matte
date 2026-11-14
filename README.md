@@ -121,16 +121,16 @@ adb sees more than one connection. With wireless debugging this is usually the s
    You see something like:
 
    ```
-   192.168.0.161:33603                                   device
-   adb-3C15CD007VR00000-ztbrG4._adb-tls-connect._tcp     device
+   192.168.1.23:37099                                   device
+   adb-R5CX1234ABC-a1B2c3._adb-tls-connect._tcp     device
    ```
 
-2. Copy the first column of one line. This is the serial, for example `192.168.0.161:33603`.
+2. Copy the first column of one line. This is the serial, for example `192.168.1.23:37099`.
 3. Run the commands with `-s` and your serial right after `adb`:
 
    ```sh
-   adb -s 192.168.0.161:33603 shell setprop debug.systemui.gaussblur_level 4
-   adb -s 192.168.0.161:33603 shell am crash com.android.systemui
+   adb -s 192.168.1.23:37099 shell setprop debug.systemui.gaussblur_level 4
+   adb -s 192.168.1.23:37099 shell am crash com.android.systemui
    ```
 
    To go back to glass, use `-1` instead of `4` in the first command.
