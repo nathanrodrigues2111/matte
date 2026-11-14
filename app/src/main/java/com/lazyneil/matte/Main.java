@@ -38,7 +38,6 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.core.widget.NestedScrollView;
 import androidx.transition.TransitionManager;
 
-import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.color.MaterialColors;
@@ -80,20 +79,12 @@ public class Main extends AppCompatActivity {
         super.onCreate(b);
         setContentView(R.layout.main);
         coord = findViewById(R.id.coord);
-        // Large top app bar: the big title scrolls with the content, the small one fades in once it is gone.
-        com.google.android.material.appbar.MaterialToolbar toolbar = findViewById(R.id.toolbar);
-        toolbar.setTitle(R.string.app_name);
-        toolbar.setSubtitle(R.string.subtitle);
         content = findViewById(R.id.content);
         NestedScrollView scroll = findViewById(R.id.scroll);
-        scroll.setOnScrollChangeListener((NestedScrollView.OnScrollChangeListener) (v, x, y, ox, oy) -> {
-            float a = Math.max(0, Math.min(1, (y - dp(48)) / (float) dp(40)));
-            for (int i = 0; i < toolbar.getChildCount(); i++) toolbar.getChildAt(i).setAlpha(a);
-        });
-        toolbar.post(() -> { for (int i = 0; i < toolbar.getChildCount(); i++) toolbar.getChildAt(i).setAlpha(0); });
         ViewCompat.setOnApplyWindowInsetsListener(scroll, (v, in) -> {
             Insets i = in.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
             v.setPadding(i.left, 0, i.right, i.bottom);
+            coord.setPadding(0, i.top, 0, 0); // solid status bar, no header
             return in;
         });
         backToMain = new OnBackPressedCallback(false) {
@@ -137,7 +128,6 @@ public class Main extends AppCompatActivity {
         header();
         build.run();
         update();
-        ((AppBarLayout) findViewById(R.id.appbar)).setExpanded(true, forward != null);
         ((NestedScrollView) findViewById(R.id.scroll)).scrollTo(0, 0);
     }
 
