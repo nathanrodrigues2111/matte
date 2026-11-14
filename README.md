@@ -62,6 +62,8 @@ adb shell setprop debug.systemui.gaussblur_level -1 && adb shell am crash com.an
 
 Or use `scripts/matte.sh` (macOS, Linux) or `scripts\matte.bat` (Windows) with `on`, `off` or `status`.
 
+Getting `adb: more than one device/emulator`? See the [FAQ](#faq).
+
 ## How it works
 
 ColorOS 17 picks a blur level for SystemUI (the status bar, notification shade and heads-up banners) based on how powerful the phone is. High-end phones get the frosted glass. Low-end phones get level `4`, which skips blur and paints notification cards solid. Matte asks SystemUI to use that low-end look on your phone.
@@ -121,8 +123,8 @@ adb sees more than one connection. With wireless debugging this is usually the s
    You see something like:
 
    ```
-   192.168.1.23:37099                                   device
-   adb-R5CX1234ABC-a1B2c3._adb-tls-connect._tcp     device
+   192.168.1.23:37099                              device
+   adb-R5CX1234ABC-a1B2c3._adb-tls-connect._tcp    device
    ```
 
 2. Copy the first column of one line. This is the serial, for example `192.168.1.23:37099`.
