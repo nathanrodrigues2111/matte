@@ -24,6 +24,7 @@ import android.view.Gravity;
 import android.view.HapticFeedbackConstants;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -37,6 +38,7 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.core.widget.NestedScrollView;
 import androidx.transition.TransitionManager;
 
+import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.color.MaterialColors;
@@ -56,6 +58,12 @@ public class Main extends AppCompatActivity {
     static final String CH = "test";
     static final String CMD_ON = "adb shell setprop " + Matte.PROP + " 4 && adb shell am crash com.android.systemui";
     static final String CMD_OFF = "adb shell setprop " + Matte.PROP + " -1 && adb shell am crash com.android.systemui";
+    // Pick the first phone when adb lists the same phone twice ("more than one device/emulator").
+    static final String SH = "S=$(adb devices | awk 'NR==2{print $1}'); ";
+    static final String PS = "$S=(adb devices)[1].Split()[0]; ";
+    static String pick(String level) {
+        return "adb -s $S shell setprop " + Matte.PROP + " " + level + " && adb -s $S shell am crash com.android.systemui";
+    }
     static final int TITLE_L = com.google.android.material.R.style.TextAppearance_Material3_TitleLarge;
     static final int TITLE_M = com.google.android.material.R.style.TextAppearance_Material3_TitleMedium;
     static final int BODY = com.google.android.material.R.style.TextAppearance_Material3_BodyMedium;
@@ -347,16 +355,34 @@ public class Main extends AppCompatActivity {
         c.addView(cmds);
         expandable(c, "Prefer a script?", "The Matte project includes matte.sh (Mac, Linux) and matte.bat (Windows). "
                 + "Run \"matte on\", \"matte off\" or \"matte status\".");
-        expandable(c, "\"More than one device\" error?", "adb sees more than one connection. With wireless debugging "
-                + "this is usually the same phone listed twice.\n\n"
-                + "1. On the computer, run: adb devices\n\n"
-                + "2. Copy the first column of one line. This is the serial, for example 192.168.1.23:37099.\n\n"
-                + "3. Run the commands with -s and your serial right after adb:\n"
-                + "adb -s 192.168.1.23:37099 shell setprop debug.systemui.gaussblur_level 4\n"
-                + "adb -s 192.168.1.23:37099 shell am crash com.android.systemui\n\n"
-                + "To go back to glass, use -1 instead of 4.\n\n"
-                + "The serial changes after a restart or Wi-Fi reconnect. If the error comes back, start from step 1. "
-                + "The matte.sh and matte.bat scripts pick the first phone by themselves.");
+        LinearLayout multi = column();
+        TextView why = text("Your phone is listed twice. These commands pick the first one.", BODY);
+        why.setTextColor(color(com.google.android.material.R.attr.colorOnSurfaceVariant));
+        why.setPadding(dp(40), 0, 0, dp(8));
+        multi.addView(why);
+        MaterialButtonToggleGroup os = new MaterialButtonToggleGroup(this);
+        os.setSingleSelection(true);
+        os.setSelectionRequired(true);
+        for (String n : new String[]{"Mac, Linux", "Windows"}) {
+            MaterialButton b = new MaterialButton(this, null, com.google.android.material.R.attr.materialButtonOutlinedStyle);
+            b.setId(View.generateViewId());
+            b.setText(n);
+            os.addView(b, new LinearLayout.LayoutParams(0, -2, 1));
+        }
+        LinearLayout.LayoutParams olp = new LinearLayout.LayoutParams(-1, -2);
+        olp.setMarginStart(dp(40));
+        multi.addView(os, olp);
+        TextView onCmd = command(multi, "Turn on", SH + pick("4"));
+        TextView offCmd = command(multi, "Back to glass", SH + pick("-1"));
+        os.addOnButtonCheckedListener((g, id, checked) -> {
+            if (!checked) return;
+            boolean win = id == g.getChildAt(1).getId();
+            onCmd.setText(win ? PS + pick("4").replace(" && ", "; ") : SH + pick("4"));
+            offCmd.setText(win ? PS + pick("-1").replace(" && ", "; ") : SH + pick("-1"));
+        });
+        os.check(os.getChildAt(0).getId());
+        multi.setPadding(dp(16), 0, dp(16), dp(12));
+        expandable(c, "\"More than one device\" error?", multi);
         tools.step(3, false, "Google's free adb tools for Windows, Mac and Linux.", "Get",
                 () -> open("https://developer.android.com/tools/releases/platform-tools"));
         updaters.add(() -> {
@@ -542,7 +568,7 @@ public class Main extends AppCompatActivity {
         return c;
     }
 
-    void command(LinearLayout parent, String label, String cmd) {
+    TextView command(LinearLayout parent, String label, String cmd) {
         TextView l = text(label, LABEL);
         l.setPadding(dp(40), dp(8), 0, dp(4));
         parent.addView(l);
@@ -556,27 +582,36 @@ public class Main extends AppCompatActivity {
         TextView code = text(cmd, BODY);
         code.setTypeface(Typeface.MONOSPACE);
         code.setTextIsSelectable(true);
-        box.addView(code, new LinearLayout.LayoutParams(0, -2, 1));
+        code.setSingleLine(true); // one clean line, swipe to read the rest
+        HorizontalScrollView scroll = new HorizontalScrollView(this);
+        scroll.setHorizontalScrollBarEnabled(false);
+        scroll.addView(code);
+        box.addView(scroll, new LinearLayout.LayoutParams(0, -2, 1));
         MaterialButton copy = new MaterialButton(this, null, com.google.android.material.R.attr.materialIconButtonStyle);
         copy.setIconResource(R.drawable.ic_content_copy);
         copy.setContentDescription("Copy " + label.toLowerCase() + " command");
         copy.setOnClickListener(v -> {
-            getSystemService(ClipboardManager.class).setPrimaryClip(ClipData.newPlainText("command", cmd));
+            getSystemService(ClipboardManager.class).setPrimaryClip(ClipData.newPlainText("command", code.getText()));
             if (Build.VERSION.SDK_INT < 33) snack("Copied");
         });
         box.addView(copy);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(-1, -2);
         lp.setMarginStart(dp(40));
         parent.addView(box, lp);
+        return code;
     }
 
     // Row whose details stay hidden until tapped, so cards stay short.
     void expandable(LinearLayout parent, String title, String details) {
-        Row r = new Row(parent, R.drawable.ic_keyboard_arrow_down, title);
-        r.lead.setImageTintList(ColorStateList.valueOf(color(com.google.android.material.R.attr.colorOnSurfaceVariant)));
         TextView d = text(details, BODY);
         d.setTextColor(color(com.google.android.material.R.attr.colorOnSurfaceVariant));
         d.setPadding(dp(56), 0, dp(16), dp(12));
+        expandable(parent, title, d);
+    }
+
+    void expandable(LinearLayout parent, String title, View d) {
+        Row r = new Row(parent, R.drawable.ic_keyboard_arrow_down, title);
+        r.lead.setImageTintList(ColorStateList.valueOf(color(com.google.android.material.R.attr.colorOnSurfaceVariant)));
         d.setVisibility(View.GONE);
         parent.addView(d);
         r.v.setOnClickListener(v -> {
