@@ -110,14 +110,32 @@ It sets one debug property SystemUI already supports and restarts the status bar
 <details>
 <summary><b>adb says "more than one device/emulator"?</b></summary>
 
-Usually the same phone listed twice, once by IP and once by wireless-debugging name. Run `adb devices`, copy one serial (for example `192.168.0.161:33603`), and add `-s <serial>`:
+adb sees more than one connection. With wireless debugging this is usually the same phone listed twice. Tell adb which one to use:
 
-```sh
-adb -s 192.168.0.161:33603 shell setprop debug.systemui.gaussblur_level 4
-adb -s 192.168.0.161:33603 shell am crash com.android.systemui
-```
+1. List the connections:
 
-Or set it once per terminal: `export ANDROID_SERIAL=192.168.0.161:33603` (Windows: `set ANDROID_SERIAL=...`). The scripts pick the first phone on their own. The IP port changes after a reboot or Wi-Fi reconnect.
+   ```sh
+   adb devices
+   ```
+
+   You see something like:
+
+   ```
+   192.168.0.161:33603                                   device
+   adb-3C15CD007VR00000-ztbrG4._adb-tls-connect._tcp     device
+   ```
+
+2. Copy the first column of one line. This is the serial, for example `192.168.0.161:33603`.
+3. Run the commands with `-s` and your serial right after `adb`:
+
+   ```sh
+   adb -s 192.168.0.161:33603 shell setprop debug.systemui.gaussblur_level 4
+   adb -s 192.168.0.161:33603 shell am crash com.android.systemui
+   ```
+
+   To go back to glass, use `-1` instead of `4` in the first command.
+
+The serial changes after a phone restart or a Wi-Fi reconnect. If you get the error again, start over from step 1. `scripts/matte.sh` and `scripts\matte.bat` pick the first phone by themselves, so they do not need these steps.
 </details>
 
 <details>
