@@ -347,6 +347,9 @@ public class Main extends AppCompatActivity {
         c.addView(cmds);
         expandable(c, "Prefer a script?", "The Matte project includes matte.sh (Mac, Linux) and matte.bat (Windows). "
                 + "Run \"matte on\", \"matte off\" or \"matte status\".");
+        expandable(c, "\"More than one device\" error?", "The same phone can show up twice over wireless debugging. "
+                + "Run \"adb devices\", copy one serial, and add \"-s <serial>\" after \"adb\" in both commands. "
+                + "The scripts pick the first phone by themselves.");
         tools.step(3, false, "Google's free adb tools for Windows, Mac and Linux.", "Get",
                 () -> open("https://developer.android.com/tools/releases/platform-tools"));
         updaters.add(() -> {
