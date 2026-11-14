@@ -290,7 +290,7 @@ public class Main extends AppCompatActivity {
 
     long lastLook;
 
-    // Experimental: SystemUI blur level also changes the pulled-down notification bar background.
+    // Experimental: SystemUI blur level also changes the notification dropdown background.
     // Pop-up banners stay solid at every level. Applies on release, since each change restarts SystemUI.
     // Changes within 15 s of the last one are saved but not applied: rapid SystemUI restarts can make Android reboot the phone.
     void experimental() {
@@ -299,7 +299,7 @@ public class Main extends AppCompatActivity {
         LinearLayout box = column();
         box.setPadding(dp(16), dp(16), dp(16), dp(8));
         TextView label = text("", TITLE_L);
-        TextView sub = text("Changes how see-through the pulled-down notification bar is. Pop-ups stay solid. "
+        TextView sub = text("Changes how see-through the notification dropdown is. Pop-ups stay solid. "
                 + "Works while Matte is on. The screen flickers on each change.", BODY);
         sub.setTextColor(color(com.google.android.material.R.attr.colorOnSurfaceVariant));
         sub.setPadding(0, dp(4), 0, dp(8));
@@ -313,8 +313,8 @@ public class Main extends AppCompatActivity {
         for (int i = 0; i < Matte.LEVELS.length; i++) if (Matte.LEVELS[i] == Matte.level(this)) cur = i;
         s.setValue(cur);
         s.setLabelFormatter(v -> Matte.LOOKS[(int) v]);
-        label.setText("Notification bar: " + Matte.LOOKS[cur]);
-        s.addOnChangeListener((sl, v, user) -> label.setText("Notification bar: " + Matte.LOOKS[(int) v]));
+        label.setText("Notification dropdown: " + Matte.LOOKS[cur]);
+        s.addOnChangeListener((sl, v, user) -> label.setText("Notification dropdown: " + Matte.LOOKS[(int) v]));
         s.addOnSliderTouchListener(new Slider.OnSliderTouchListener() {
             @Override public void onStartTrackingTouch(Slider sl) {}
             @Override public void onStopTrackingTouch(Slider sl) {

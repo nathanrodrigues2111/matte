@@ -19,7 +19,7 @@ final class Matte {
     static final String SHIZUKU = "moe.shizuku.privileged.api";
     static final int ON = 4, OFF = -1;
     // Experimental, seen on a OnePlus 15, ColorOS 17.0.0.102: 5, 4 and 3 all keep pop-ups solid and change
-    // the notification bar background. -1 to 2 are stock glass; 6 breaks the shade, so it is not offered.
+    // the notification dropdown background. -1 to 2 are stock glass; 6 breaks the shade, so it is not offered.
     static final int[] LEVELS = {5, 4, 3};
     static final String[] LOOKS = {"Light", "Default", "Dark"};
 
