@@ -27,16 +27,16 @@
 
 | ColorOS 17 glass | Matte |
 | :---: | :---: |
-| <img src="docs/img/glass.png" alt="ColorOS 17 glass notification card, white text on light grey, hard to read" width="380"> | <img src="docs/img/matte.png" alt="Matte on: solid dark notification card with clear white text" width="380"> |
+| <img src="docs/img/glass.png?v=0.3.0" alt="ColorOS 17 glass notification card, white text on light grey, hard to read" width="380"> | <img src="docs/img/matte.png?v=0.3.0" alt="Matte on: solid dark notification card with clear white text" width="380"> |
 
 Real screenshots from a OnePlus 15 on ColorOS 17.0.0.102.
 
 ## Screenshots
 
 <p align="center">
-<img src="docs/img/app-1.png" alt="Matte main screen: Matte is on" width="250">
-<img src="docs/img/app-2.png" alt="Matte setup steps with Shizuku" width="250">
-<img src="docs/img/app-3.png" alt="Matte settings: re-apply after restart, test notification" width="250">
+<img src="docs/img/app-1.png?v=0.3.0" alt="Matte main screen: Matte is on" width="250">
+<img src="docs/img/app-2.png?v=0.3.0" alt="Matte setup done with Shizuku, re-apply after restart, Quick Settings tile" width="250">
+<img src="docs/img/app-3.png?v=0.3.0" alt="Matte test notification and Experimental notification dropdown slider set to Dark" width="250">
 </p>
 
 ## Why
@@ -50,6 +50,7 @@ ColorOS 17 draws heads-up banners and shade cards as light grey frosted glass wi
 1. Install and start [Shizuku](https://shizuku.rikka.app/).
 2. Install Matte from [Releases](https://github.com/nathanrodrigues2111/matte/releases/latest) and allow Shizuku access.
 3. Switch Matte on, or add the Matte tile to Quick Settings.
+4. Optional: under Experimental, pick how dark the notification dropdown is (Dark is the default).
 
 Matte turns itself back on after a reboot once Shizuku is running.
 
