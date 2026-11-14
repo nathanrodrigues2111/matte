@@ -405,6 +405,7 @@ footer a{color:var(--muted)}
     <div class="faq">
       <details><summary>Does it survive a restart?</summary><p>No. Sleep, lock and SystemUI restarts are fine. A full phone restart resets it. With Shizuku, Matte re-applies it once Shizuku is running. With adb, run the command again.</p></details>
       <details><summary>Is it safe?</summary><p>It sets one debug property SystemUI already supports and restarts the status bar. No root, nothing written to the system, fully reversible.</p></details>
+      <details><summary>adb says "more than one device/emulator"?</summary><p>Usually the same phone listed twice, once by IP and once by wireless-debugging name. Run <code>adb devices</code>, copy one serial (for example <code>192.168.0.161:33603</code>), and add <code>-s &lt;serial&gt;</code> after <code>adb</code> in both commands. Or set <code>ANDROID_SERIAL</code> to that serial once per terminal. The scripts pick the first phone on their own.</p></details>
       <details><summary>How do I undo it?</summary><p>Switch it off in Matte, run the turn-off command, or restart the phone.</p></details>
       <details><summary>Are there side effects?</summary><p>Other SystemUI blur goes flat too: shade background, Quick Settings, volume panel. The status bar flickers for a few seconds while switching.</p></details>
       <details><summary>Which phones are supported?</summary><p>ColorOS 17 on OnePlus, OPPO and realme. Verified on a OnePlus 15 with ColorOS 17.0.0.102. Other versions are untested.</p></details>

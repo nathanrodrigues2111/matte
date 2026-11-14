@@ -108,6 +108,19 @@ It sets one debug property SystemUI already supports and restarts the status bar
 </details>
 
 <details>
+<summary><b>adb says "more than one device/emulator"?</b></summary>
+
+Usually the same phone listed twice, once by IP and once by wireless-debugging name. Run `adb devices`, copy one serial (for example `192.168.0.161:33603`), and add `-s <serial>`:
+
+```sh
+adb -s 192.168.0.161:33603 shell setprop debug.systemui.gaussblur_level 4
+adb -s 192.168.0.161:33603 shell am crash com.android.systemui
+```
+
+Or set it once per terminal: `export ANDROID_SERIAL=192.168.0.161:33603` (Windows: `set ANDROID_SERIAL=...`). The scripts pick the first phone on their own. The IP port changes after a reboot or Wi-Fi reconnect.
+</details>
+
+<details>
 <summary><b>How do I undo it?</b></summary>
 
 Switch it off in Matte, run the off command, or restart the phone.

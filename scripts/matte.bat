@@ -5,7 +5,8 @@ rem Lost on every phone restart: run "matte.bat on" again after each restart.
 setlocal
 set "MODE=%~1"
 if "%MODE%"=="" set "MODE=status"
-adb get-state >nul 2>&1 || (echo matte: no phone found. Connect it by USB and allow USB debugging. & exit /b 1)
+if not defined ANDROID_SERIAL for /f "skip=1 tokens=1,2" %%a in ('adb devices') do if "%%b"=="device" if not defined ANDROID_SERIAL set "ANDROID_SERIAL=%%a"
+if not defined ANDROID_SERIAL (echo matte: no phone found. Connect it by USB and allow USB debugging. & exit /b 1)
 if /i "%MODE%"=="on" (
   adb shell setprop debug.systemui.gaussblur_level 4
   adb shell am crash com.android.systemui >nul 2>&1
