@@ -193,7 +193,6 @@ public class Main extends AppCompatActivity {
             if (shizuku()) shizukuSetup(); else computerSetup();
             if (shizuku()) afterRestart();
             tryIt();
-            if (co17) compatCard(false);
             settings();
         });
     }
@@ -399,6 +398,10 @@ public class Main extends AppCompatActivity {
                     App.nightMode(w);
                     if (AppCompatDelegate.getDefaultNightMode() == before) recreate();
                 }).show());
+        Row y = new Row(c, R.drawable.ic_play_arrow, "Made by lazyneil");
+        y.sub("YouTube channel");
+        y.trailIcon(R.drawable.ic_chevron_right, com.google.android.material.R.attr.colorOnSurfaceVariant);
+        y.v.setOnClickListener(v -> open("https://www.youtube.com/channel/UCW9BqnLNdhOjRBsHnhXZjjA"));
     }
 
     void compatCard(boolean always) {

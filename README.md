@@ -4,19 +4,21 @@
 
 <h1>Matte</h1>
 
-<p><b>Solid, readable notification cards for ColorOS 17. One tap, no root, fully reversible.</b></p>
+<p><b>Solid, readable notification cards. One tap, no root, fully reversible.</b></p>
+
+<p>Made by <a href="https://www.youtube.com/channel/UCW9BqnLNdhOjRBsHnhXZjjA"><b>lazyneil</b></a></p>
 
 <a href="https://github.com/nathanrodrigues2111/matte/releases/latest"><img alt="Latest release" src="https://img.shields.io/github/v/release/nathanrodrigues2111/matte?label=release&color=4655d9"></a>
 <a href="https://github.com/nathanrodrigues2111/matte/releases"><img alt="Downloads" src="https://img.shields.io/github/downloads/nathanrodrigues2111/matte/total?color=4655d9"></a>
 <img alt="Platform Android" src="https://img.shields.io/badge/platform-Android-3ddc84">
-<img alt="ColorOS 17" src="https://img.shields.io/badge/ColorOS-17-1f6feb">
 <img alt="No root" src="https://img.shields.io/badge/root-not%20required-2ea043">
 <a href="LICENSE"><img alt="License MIT" src="https://img.shields.io/badge/license-MIT-lightgrey"></a>
 
 <p>
 <a href="https://nathanrodrigues2111.github.io/matte/"><b>Website</b></a> &nbsp;·&nbsp;
 <a href="https://github.com/nathanrodrigues2111/matte/releases/latest"><b>Download APK</b></a> &nbsp;·&nbsp;
-<a href="#how-it-works"><b>How it works</b></a>
+<a href="#how-it-works"><b>How it works</b></a> &nbsp;·&nbsp;
+<a href="https://www.youtube.com/channel/UCW9BqnLNdhOjRBsHnhXZjjA"><b>YouTube</b></a>
 </p>
 
 </div>
@@ -126,6 +128,10 @@ ColorOS 17 on OnePlus, OPPO and realme. Other versions are untested.
 ## Disclaimer
 
 Not affiliated with, endorsed by, or sponsored by OPPO, OnePlus or realme. Use at your own risk.
+
+## Credits
+
+Made by [lazyneil](https://www.youtube.com/channel/UCW9BqnLNdhOjRBsHnhXZjjA). Subscribe on [YouTube](https://www.youtube.com/channel/UCW9BqnLNdhOjRBsHnhXZjjA).
 
 ## License
 
