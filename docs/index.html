@@ -285,7 +285,7 @@ footer a{color:var(--muted)}
       <span class="bar"></span>
     </div>
     <div class="chips"><span><i></i>Glass</span><span><i></i>Matte</span></div>
-    <p class="note">Solid #404040 in dark mode, #fafafa in light mode.</p>
+    <p class="note">Solid cards, full-contrast text.</p>
   </section>
 
   <section>
@@ -365,8 +365,8 @@ footer a{color:var(--muted)}
         <header><h3>Computer</h3><span class="badge">No app</span></header>
         <p class="muted">Enable USB debugging, connect the phone, run:</p>
         <div class="code">
-          <div class="lbl">Turn on<button class="copy" type="button" data-copy="adb shell setprop debug.systemui.gaussblur_level 4 &amp;&amp; adb shell am crash com.android.systemui"></button></div>
-          <pre><span class="p">$ </span>adb shell setprop debug.systemui.gaussblur_level 4
+          <div class="lbl">Turn on<button class="copy" type="button" data-copy="adb shell setprop debug.systemui.gaussblur_level 3 &amp;&amp; adb shell am crash com.android.systemui"></button></div>
+          <pre><span class="p">$ </span>adb shell setprop debug.systemui.gaussblur_level 3
 <span class="p">$ </span>adb shell am crash com.android.systemui</pre>
         </div>
         <div class="code">
@@ -386,9 +386,9 @@ footer a{color:var(--muted)}
         <h2 style="margin:8px 0 24px">One debug switch, already built in.</h2>
         <p class="muted">ColorOS 17 gives powerful phones frosted glass and low-end phones a solid, blur-free look. Matte asks SystemUI to use the low-end look on your phone.</p>
         <ol class="steps">
-          <li><b>Set the override.</b> SystemUI checks <code>debug.systemui.gaussblur_level</code> before its normal blur level. The shell user (adb, or Shizuku) may set <code>debug.*</code> properties, so no root is needed. Matte sets it to <code>4</code>.</li>
+          <li><b>Set the override.</b> SystemUI checks <code>debug.systemui.gaussblur_level</code> before its normal blur level. The shell user (adb, or Shizuku) may set <code>debug.*</code> properties, so no root is needed. Matte sets it to <code>3</code>.</li>
           <li><b>Restart SystemUI.</b> The level is only read at startup, so Matte restarts SystemUI. The screen flickers for a few seconds.</li>
-          <li><b>Solid cards.</b> Banners and shade cards come back painted solid, <code>#404040</code> in dark mode and <code>#fafafa</code> in light mode.</li>
+          <li><b>Solid cards.</b> Banners and dropdown cards come back painted solid and dark, with full-contrast text.</li>
         </ol>
         <p class="muted">Off sets it back to <code>-1</code>. The value lives in memory, so a phone restart clears it. Side effect: the shade background, Quick Settings and volume panel lose their blur too.</p>
       </div>
@@ -414,10 +414,10 @@ footer a{color:var(--muted)}
       <details><summary>adb says "more than one device/emulator"?</summary>
         <p>Your phone is listed twice. These commands pick the first one.</p>
         <div class="os" role="tablist"><button type="button" role="tab" aria-selected="true" data-os="mac">Mac, Linux</button><button type="button" role="tab" aria-selected="false" data-os="win">Windows</button></div>
-        <div class="os-pane" data-os="mac"><div class="code"><div class="lbl">Turn on<button class="copy" type="button" data-copy="S=$(adb devices | awk &#x27;NR==2{print $1}&#x27;); adb -s $S shell setprop debug.systemui.gaussblur_level 4 &amp;&amp; adb -s $S shell am crash com.android.systemui"></button></div><pre><span class="p">$ </span>S=$(adb devices | awk 'NR==2{print $1}'); adb -s $S shell setprop debug.systemui.gaussblur_level 4 &amp;&amp; adb -s $S shell am crash com.android.systemui</pre></div><div class="code"><div class="lbl">Back to glass<button class="copy" type="button" data-copy="S=$(adb devices | awk &#x27;NR==2{print $1}&#x27;); adb -s $S shell setprop debug.systemui.gaussblur_level -1 &amp;&amp; adb -s $S shell am crash com.android.systemui"></button></div><pre><span class="p">$ </span>S=$(adb devices | awk 'NR==2{print $1}'); adb -s $S shell setprop debug.systemui.gaussblur_level -1 &amp;&amp; adb -s $S shell am crash com.android.systemui</pre></div></div>
-        <div class="os-pane" data-os="win" hidden><div class="code"><div class="lbl">Turn on (PowerShell)<button class="copy" type="button" data-copy="$S=(adb devices)[1].Split()[0]; adb -s $S shell setprop debug.systemui.gaussblur_level 4; adb -s $S shell am crash com.android.systemui"></button></div><pre><span class="p">&gt; </span>$S=(adb devices)[1].Split()[0]; adb -s $S shell setprop debug.systemui.gaussblur_level 4; adb -s $S shell am crash com.android.systemui</pre></div><div class="code"><div class="lbl">Back to glass (PowerShell)<button class="copy" type="button" data-copy="$S=(adb devices)[1].Split()[0]; adb -s $S shell setprop debug.systemui.gaussblur_level -1; adb -s $S shell am crash com.android.systemui"></button></div><pre><span class="p">&gt; </span>$S=(adb devices)[1].Split()[0]; adb -s $S shell setprop debug.systemui.gaussblur_level -1; adb -s $S shell am crash com.android.systemui</pre></div></div>
+        <div class="os-pane" data-os="mac"><div class="code"><div class="lbl">Turn on<button class="copy" type="button" data-copy="S=$(adb devices | awk &#x27;NR==2{print $1}&#x27;); adb -s $S shell setprop debug.systemui.gaussblur_level 3 &amp;&amp; adb -s $S shell am crash com.android.systemui"></button></div><pre><span class="p">$ </span>S=$(adb devices | awk 'NR==2{print $1}'); adb -s $S shell setprop debug.systemui.gaussblur_level 3 &amp;&amp; adb -s $S shell am crash com.android.systemui</pre></div><div class="code"><div class="lbl">Back to glass<button class="copy" type="button" data-copy="S=$(adb devices | awk &#x27;NR==2{print $1}&#x27;); adb -s $S shell setprop debug.systemui.gaussblur_level -1 &amp;&amp; adb -s $S shell am crash com.android.systemui"></button></div><pre><span class="p">$ </span>S=$(adb devices | awk 'NR==2{print $1}'); adb -s $S shell setprop debug.systemui.gaussblur_level -1 &amp;&amp; adb -s $S shell am crash com.android.systemui</pre></div></div>
+        <div class="os-pane" data-os="win" hidden><div class="code"><div class="lbl">Turn on (PowerShell)<button class="copy" type="button" data-copy="$S=(adb devices)[1].Split()[0]; adb -s $S shell setprop debug.systemui.gaussblur_level 3; adb -s $S shell am crash com.android.systemui"></button></div><pre><span class="p">&gt; </span>$S=(adb devices)[1].Split()[0]; adb -s $S shell setprop debug.systemui.gaussblur_level 3; adb -s $S shell am crash com.android.systemui</pre></div><div class="code"><div class="lbl">Back to glass (PowerShell)<button class="copy" type="button" data-copy="$S=(adb devices)[1].Split()[0]; adb -s $S shell setprop debug.systemui.gaussblur_level -1; adb -s $S shell am crash com.android.systemui"></button></div><pre><span class="p">&gt; </span>$S=(adb devices)[1].Split()[0]; adb -s $S shell setprop debug.systemui.gaussblur_level -1; adb -s $S shell am crash com.android.systemui</pre></div></div>
       </details>
-      <details><summary>What is the Experimental slider?</summary><p>With Shizuku, the app has an Experimental "Notification dropdown" slider: Light, Default or Dark. It changes how see-through the notification dropdown is. Pop-ups stay solid at every setting. Default is the normal Matte look. Each change restarts the status bar, so give it a few seconds between changes.</p></details>
+      <details><summary>What is the Experimental slider?</summary><p>With Shizuku, the app has an Experimental "Notification dropdown" slider: Light, Grey or Dark. It changes how see-through the notification dropdown is. Pop-ups stay solid at every setting. Dark is the default. Each change restarts the status bar, so give it a few seconds between changes.</p></details>
       <details><summary>How do I undo it?</summary><p>Switch it off in Matte, run the turn-off command, or restart the phone.</p></details>
       <details><summary>Are there side effects?</summary><p>Other SystemUI blur goes flat too: shade background, Quick Settings, volume panel. The status bar flickers for a few seconds while switching.</p></details>
       <details><summary>Which phones are supported?</summary><p>ColorOS 17 on OnePlus, OPPO and realme. Verified on a OnePlus 15 with ColorOS 17.0.0.102. Other versions are untested.</p></details>

@@ -19,8 +19,8 @@ android {
         applicationId = "com.lazyneil.matte"
         minSdk = 30
         targetSdk = 37
-        versionCode = 12
-        versionName = "0.2.2"
+        versionCode = 13
+        versionName = "0.3.0"
     }
     signingConfigs {
         if (keyProps.isNotEmpty()) create("release") {

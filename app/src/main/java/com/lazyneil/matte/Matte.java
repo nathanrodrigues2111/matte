@@ -13,15 +13,15 @@ import java.lang.reflect.Method;
 import rikka.shizuku.Shizuku;
 
 // ColorOS 17 SystemUI reads debug.systemui.gaussblur_level once at startup (ScrimUtil.DEBUG_LEVEL).
-// 4 = low-end "B anim" branch: no card blur, solid cards. -1 = use the device default (glass).
+// 3, 4 and 5 skip card blur (low-end branches). Matte uses 3 (Dark) by default. -1 = use the device default (glass).
 final class Matte {
     static final String PROP = "debug.systemui.gaussblur_level";
     static final String SHIZUKU = "moe.shizuku.privileged.api";
-    static final int ON = 4, OFF = -1;
+    static final int ON = 3, OFF = -1; // ON = default look (Dark)
     // Experimental, seen on a OnePlus 15, ColorOS 17.0.0.102: 5, 4 and 3 all keep pop-ups solid and change
     // the notification dropdown background. -1 to 2 are stock glass; 6 breaks the shade, so it is not offered.
     static final int[] LEVELS = {5, 4, 3};
-    static final String[] LOOKS = {"Light", "Default", "Dark"};
+    static final String[] LOOKS = {"Light", "Grey", "Dark"};
 
     static int level(Context c) {
         int l = prefs(c).getInt("barLevel", ON);

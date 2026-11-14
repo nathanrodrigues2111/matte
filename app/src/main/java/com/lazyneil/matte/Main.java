@@ -57,7 +57,7 @@ import rikka.shizuku.Shizuku;
 // screen; update() re-reads live state (property, Shizuku, settings) into them.
 public class Main extends AppCompatActivity {
     static final String CH = "test";
-    static final String CMD_ON = "adb shell setprop " + Matte.PROP + " 4 && adb shell am crash com.android.systemui";
+    static final String CMD_ON = "adb shell setprop " + Matte.PROP + " " + Matte.ON + " && adb shell am crash com.android.systemui";
     static final String CMD_OFF = "adb shell setprop " + Matte.PROP + " -1 && adb shell am crash com.android.systemui";
     // Pick the first phone when adb lists the same phone twice ("more than one device/emulator").
     static final String SH = "S=$(adb devices | awk 'NR==2{print $1}'); ";
@@ -427,12 +427,12 @@ public class Main extends AppCompatActivity {
         LinearLayout.LayoutParams olp = new LinearLayout.LayoutParams(-1, -2);
         olp.setMarginStart(dp(40));
         multi.addView(os, olp);
-        TextView onCmd = command(multi, "Turn on", SH + pick("4"));
+        TextView onCmd = command(multi, "Turn on", SH + pick(String.valueOf(Matte.ON)));
         TextView offCmd = command(multi, "Back to glass", SH + pick("-1"));
         os.addOnButtonCheckedListener((g, id, checked) -> {
             if (!checked) return;
             boolean win = id == g.getChildAt(1).getId();
-            onCmd.setText(win ? PS + pick("4").replace(" && ", "; ") : SH + pick("4"));
+            onCmd.setText(win ? PS + pick(String.valueOf(Matte.ON)).replace(" && ", "; ") : SH + pick(String.valueOf(Matte.ON)));
             offCmd.setText(win ? PS + pick("-1").replace(" && ", "; ") : SH + pick("-1"));
         });
         os.check(os.getChildAt(0).getId());

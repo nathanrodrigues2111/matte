@@ -41,7 +41,7 @@ Real screenshots from a OnePlus 15 on ColorOS 17.0.0.102.
 
 ## Why
 
-ColorOS 17 draws heads-up banners and shade cards as light grey frosted glass with white text. Over light apps they are close to unreadable, and no setting fixes it. Matte makes the cards solid: `#404040` in dark mode, `#fafafa` in light mode.
+ColorOS 17 draws heads-up banners and shade cards as light grey frosted glass with white text. Over light apps they are close to unreadable, and no setting fixes it. Matte makes the cards solid and dark, with full-contrast text.
 
 ## Quick start
 
@@ -56,7 +56,7 @@ Matte turns itself back on after a reboot once Shizuku is running.
 **From a computer, with adb**
 
 ```sh
-adb shell setprop debug.systemui.gaussblur_level 4 && adb shell am crash com.android.systemui    # on
+adb shell setprop debug.systemui.gaussblur_level 3 && adb shell am crash com.android.systemui    # on
 adb shell setprop debug.systemui.gaussblur_level -1 && adb shell am crash com.android.systemui   # off
 ```
 
@@ -66,19 +66,19 @@ Getting `adb: more than one device/emulator`? See the [FAQ](#faq).
 
 ## How it works
 
-ColorOS 17 picks a blur level for SystemUI (the status bar, notification shade and heads-up banners) based on how powerful the phone is. High-end phones get the frosted glass. Low-end phones get level `4`, which skips blur and paints notification cards solid. Matte asks SystemUI to use that low-end look on your phone.
+ColorOS 17 picks a blur level for SystemUI (the status bar, notification shade and heads-up banners) based on how powerful the phone is. High-end phones get the frosted glass. Low-end phones get levels that skip blur and paint notification cards solid. Matte asks SystemUI to use one of those, level `3`, on your phone.
 
 ```mermaid
 flowchart LR
-    A[Matte or adb] -->|setprop debug.systemui.gaussblur_level 4| B[System property in memory]
+    A[Matte or adb] -->|setprop debug.systemui.gaussblur_level 3| B[System property in memory]
     A -->|am crash com.android.systemui| C[SystemUI restarts]
     B --> C
-    C -->|reads level 4 at startup| D[Solid notification cards]
+    C -->|reads level 3 at startup| D[Solid notification cards]
 ```
 
 1. **Set the override.** SystemUI checks a debug property, `debug.systemui.gaussblur_level`, before its normal blur level. Android lets the shell user (adb, or Shizuku acting as adb) set any `debug.*` property, so no root is needed.
 2. **Restart SystemUI.** SystemUI only reads the level when it starts, so Matte restarts it. The screen flickers for a few seconds and Android brings SystemUI straight back.
-3. **Solid cards.** With level `4`, banners and shade cards are painted solid: `#404040` in dark mode, `#fafafa` in light mode, with full-contrast text.
+3. **Solid cards.** With level `3`, banners and dropdown cards are painted solid and dark, with full-contrast text. Levels `4` (grey) and `5` (light) are under Experimental in the app.
 
 Turning Matte off sets the property back to `-1` (no override) and restarts SystemUI again.
 
@@ -117,7 +117,7 @@ Your phone is listed twice. These commands pick the first one.
 **Mac, Linux**
 
 ```sh
-S=$(adb devices | awk 'NR==2{print $1}'); adb -s $S shell setprop debug.systemui.gaussblur_level 4 && adb -s $S shell am crash com.android.systemui
+S=$(adb devices | awk 'NR==2{print $1}'); adb -s $S shell setprop debug.systemui.gaussblur_level 3 && adb -s $S shell am crash com.android.systemui
 ```
 
 ```sh
@@ -127,7 +127,7 @@ S=$(adb devices | awk 'NR==2{print $1}'); adb -s $S shell setprop debug.systemui
 **Windows (PowerShell)**
 
 ```powershell
-$S=(adb devices)[1].Split()[0]; adb -s $S shell setprop debug.systemui.gaussblur_level 4; adb -s $S shell am crash com.android.systemui
+$S=(adb devices)[1].Split()[0]; adb -s $S shell setprop debug.systemui.gaussblur_level 3; adb -s $S shell am crash com.android.systemui
 ```
 
 ```powershell
@@ -140,7 +140,7 @@ The first command of each pair turns Matte on, the second goes back to glass. Th
 <details>
 <summary><b>What is the Experimental slider?</b></summary>
 
-With Shizuku, the app has an Experimental section with a "Notification dropdown" slider: Light, Default or Dark. It changes how see-through the notification dropdown is. Pop-ups stay solid at every setting. Default is the normal Matte look. Each change restarts the status bar, so give it a few seconds between changes.
+With Shizuku, the app has an Experimental section with a "Notification dropdown" slider: Light, Grey or Dark. It changes how see-through the notification dropdown is. Pop-ups stay solid at every setting. Dark is the default. Each change restarts the status bar, so give it a few seconds between changes.
 </details>
 
 <details>

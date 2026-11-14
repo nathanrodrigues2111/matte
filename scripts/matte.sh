@@ -10,9 +10,9 @@ A=(adb -s "$S" shell)
 restart() { "${A[@]}" am crash com.android.systemui >/dev/null 2>&1 || true; echo "Status bar restarting, the screen flickers for a few seconds."; }
 
 case "${1:-status}" in
-  on)     "${A[@]}" setprop debug.systemui.gaussblur_level 4; restart ;;
+  on)     "${A[@]}" setprop debug.systemui.gaussblur_level 3; restart ;;
   off)    "${A[@]}" setprop debug.systemui.gaussblur_level -1; restart ;;
   status) v=$("${A[@]}" getprop debug.systemui.gaussblur_level | tr -d '\r')
-          [ "$v" = 4 ] && echo "Matte: on (solid cards)" || echo "Matte: off (glass cards)" ;;
+          case "$v" in 3|4|5) true ;; *) false ;; esac && echo "Matte: on (solid cards)" || echo "Matte: off (glass cards)" ;;
   *)      echo "usage: matte.sh on|off|status"; exit 1 ;;
 esac
