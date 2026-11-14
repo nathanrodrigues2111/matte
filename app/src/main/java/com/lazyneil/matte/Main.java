@@ -31,7 +31,6 @@ import android.widget.TextView;
 import androidx.activity.EdgeToEdge;
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -91,8 +90,10 @@ public class Main extends AppCompatActivity {
             @Override public void handleOnBackPressed() { showMain(false); }
         };
         getOnBackPressedDispatcher().addCallback(this, backToMain);
+        channel(this);
         if (checkSelfPermission("android.permission.POST_NOTIFICATIONS") != 0)
             requestPermissions(new String[]{"android.permission.POST_NOTIFICATIONS"}, 1);
+        else if (b == null && !popups(this)) askPopups();
         if (method().isEmpty()) showChooser(null); else showMain(null);
         Shizuku.addBinderReceivedListener(binderUp);
         Shizuku.addBinderDeadListener(binderDown);
@@ -104,6 +105,40 @@ public class Main extends AppCompatActivity {
         Shizuku.removeBinderDeadListener(binderDown);
         Shizuku.removeRequestPermissionResultListener(permResult);
         super.onDestroy();
+    }
+
+    @Override public void onRequestPermissionsResult(int code, String[] p, int[] r) {
+        super.onRequestPermissionsResult(code, p, r);
+        if (code == 1 && r.length > 0 && r[0] == 0 && !popups(this)) askPopups();
+    }
+
+    // ColorOS creates new channels with banners off, whatever importance the app asks for.
+    static void channel(Context c) {
+        NotificationManager nm = c.getSystemService(NotificationManager.class);
+        if (nm.getNotificationChannel(CH) == null)
+            nm.createNotificationChannel(new NotificationChannel(CH, "Test notifications", NotificationManager.IMPORTANCE_HIGH));
+    }
+
+    static boolean allowed(Context c) {
+        return c.checkSelfPermission("android.permission.POST_NOTIFICATIONS") == 0
+                && c.getSystemService(NotificationManager.class).areNotificationsEnabled();
+    }
+
+    static boolean popups(Context c) {
+        NotificationChannel ch = c.getSystemService(NotificationManager.class).getNotificationChannel(CH);
+        return allowed(c) && ch != null && ch.getImportance() >= NotificationManager.IMPORTANCE_HIGH;
+    }
+
+    void openChannel() {
+        // App page, not the channel page: ColorOS keeps the Banner toggle there.
+        startActivity(new Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).putExtra(Settings.EXTRA_APP_PACKAGE, getPackageName()));
+    }
+
+    void askPopups() {
+        new MaterialAlertDialogBuilder(this).setTitle("Turn on pop-ups")
+                .setMessage("The test notification needs to pop up at the top of the screen. Your phone turns this off for new apps.\n\nOn the next screen, turn on Banner notifications.")
+                .setPositiveButton("Open settings", (d, w) -> openChannel())
+                .setNegativeButton("Not now", null).show();
     }
 
     @Override protected void onResume() {
@@ -360,7 +395,8 @@ public class Main extends AppCompatActivity {
         ws.setOnCheckedChangeListener((v, on) -> Matte.prefs(this).edit().putBoolean("white", on).apply());
         white.v.setOnClickListener(v -> ws.toggle());
         send.button("Send", () -> {
-            if (ws.isChecked()) startActivity(new Intent(this, White.class));
+            if (!popups(this)) askPopups();
+            else if (ws.isChecked()) startActivity(new Intent(this, White.class));
             else postTest(this);
         });
         if (!shizuku()) {
@@ -384,9 +420,8 @@ public class Main extends AppCompatActivity {
                 .setSingleChoiceItems(App.THEMES, theme, (d, w) -> {
                     d.dismiss();
                     Matte.prefs(this).edit().putInt("theme", w).apply();
-                    int before = AppCompatDelegate.getDefaultNightMode();
                     App.nightMode(w);
-                    if (AppCompatDelegate.getDefaultNightMode() == before) recreate();
+                    recreate(); // AppCompat skips it when the look changes but the night flag does not (Dark to AMOLED).
                 }).show());
         Row y = new Row(c, R.drawable.ic_play_arrow, "Made by lazyneil");
         y.sub("YouTube channel");
@@ -417,12 +452,10 @@ public class Main extends AppCompatActivity {
     }
 
     void notifRow(Row r) {
-        boolean ok = checkSelfPermission("android.permission.POST_NOTIFICATIONS") == 0
-                && getSystemService(NotificationManager.class).areNotificationsEnabled();
-        r.sub(ok ? "Allowed, for the test notification" : "Needed for the test notification.");
-        if (ok) r.trailIcon(R.drawable.ic_check_circle_fill, androidx.appcompat.R.attr.colorPrimary);
-        else r.button("Allow", () -> startActivity(new Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
-                .putExtra(Settings.EXTRA_APP_PACKAGE, getPackageName())));
+        boolean ok = allowed(this), pop = popups(this);
+        r.sub(pop ? "Allowed, with pop-ups" : ok ? "Pop-ups are off. Needed for the test." : "Needed for the test notification.");
+        if (pop) r.trailIcon(R.drawable.ic_check_circle_fill, androidx.appcompat.R.attr.colorPrimary);
+        else r.button(ok ? "Turn on" : "Allow", this::openChannel);
     }
 
     void toggle(boolean on) {
@@ -448,10 +481,8 @@ public class Main extends AppCompatActivity {
     }
 
     static void postTest(Context c) {
-        NotificationManager nm = c.getSystemService(NotificationManager.class);
-        if (nm.getNotificationChannel(CH) == null)
-            nm.createNotificationChannel(new NotificationChannel(CH, "Test notifications", NotificationManager.IMPORTANCE_HIGH));
-        nm.notify(1, new Notification.Builder(c, CH)
+        channel(c);
+        c.getSystemService(NotificationManager.class).notify(1, new Notification.Builder(c, CH)
                 .setSmallIcon(R.drawable.ic_solid)
                 .setContentTitle("lazyneil")
                 .setContentText("This is how your notifications look now. Pull down the shade to compare.")
