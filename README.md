@@ -112,32 +112,29 @@ It sets one debug property SystemUI already supports and restarts the status bar
 <details>
 <summary><b>adb says "more than one device/emulator"?</b></summary>
 
-adb sees more than one connection. With wireless debugging this is usually the same phone listed twice. Tell adb which one to use:
+Your phone is listed twice. These commands pick the first one.
 
-1. List the connections:
+**Mac, Linux**
 
-   ```sh
-   adb devices
-   ```
+```sh
+S=$(adb devices | awk 'NR==2{print $1}'); adb -s $S shell setprop debug.systemui.gaussblur_level 4 && adb -s $S shell am crash com.android.systemui
+```
 
-   You see something like:
+```sh
+S=$(adb devices | awk 'NR==2{print $1}'); adb -s $S shell setprop debug.systemui.gaussblur_level -1 && adb -s $S shell am crash com.android.systemui
+```
 
-   ```
-   192.168.1.23:37099                              device
-   adb-R5CX1234ABC-a1B2c3._adb-tls-connect._tcp    device
-   ```
+**Windows (PowerShell)**
 
-2. Copy the first column of one line. This is the serial, for example `192.168.1.23:37099`.
-3. Run the commands with `-s` and your serial right after `adb`:
+```powershell
+$S=(adb devices)[1].Split()[0]; adb -s $S shell setprop debug.systemui.gaussblur_level 4; adb -s $S shell am crash com.android.systemui
+```
 
-   ```sh
-   adb -s 192.168.1.23:37099 shell setprop debug.systemui.gaussblur_level 4
-   adb -s 192.168.1.23:37099 shell am crash com.android.systemui
-   ```
+```powershell
+$S=(adb devices)[1].Split()[0]; adb -s $S shell setprop debug.systemui.gaussblur_level -1; adb -s $S shell am crash com.android.systemui
+```
 
-   To go back to glass, use `-1` instead of `4` in the first command.
-
-The serial changes after a phone restart or a Wi-Fi reconnect. If you get the error again, start over from step 1. `scripts/matte.sh` and `scripts\matte.bat` pick the first phone by themselves, so they do not need these steps.
+The first command of each pair turns Matte on, the second goes back to glass. The scripts in `scripts/` pick the first phone by themselves.
 </details>
 
 <details>

@@ -182,10 +182,12 @@ details[open] summary::after{transform:rotate(45deg)}
 details::details-content{height:0;opacity:0;overflow:clip;transition:height .25s ease,opacity .25s ease,content-visibility .25s allow-discrete}
 details[open]::details-content{height:auto;opacity:1}
 details p{padding:0 0 24px;color:var(--muted);max-width:640px}
-.faq ol{margin:0 0 24px;padding-left:22px;color:var(--muted);max-width:640px}
-.faq ol li{margin-bottom:8px}
-.faq ol p{padding:0 0 10px}
-.faq ol .code{margin:0 0 12px}
+.os{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:3px;margin:0 0 12px}
+.os button{border:0;background:transparent;color:var(--muted);font:500 14px var(--font);padding:6px 14px;border-radius:999px;cursor:pointer}
+.os button[aria-selected=true]{background:var(--code-bg);color:var(--code-text)}
+.os-pane{max-width:640px;padding-bottom:24px}
+.os-pane .code{margin-bottom:10px}
+.os-pane pre{white-space:pre;overflow-x:auto;scrollbar-width:none}
 
 footer{border-top:1px solid var(--line);padding:40px 0 56px;font-size:14px;color:var(--muted)}
 footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px}
@@ -410,20 +412,10 @@ footer a{color:var(--muted)}
       <details><summary>Does it survive a restart?</summary><p>No. Sleep, lock and SystemUI restarts are fine. A full phone restart resets it. With Shizuku, Matte re-applies it once Shizuku is running. With adb, run the command again.</p></details>
       <details><summary>Is it safe?</summary><p>It sets one debug property SystemUI already supports and restarts the status bar. No root, nothing written to the system, fully reversible.</p></details>
       <details><summary>adb says "more than one device/emulator"?</summary>
-        <p>adb sees more than one connection. With wireless debugging this is usually the same phone listed twice. Tell adb which one to use:</p>
-        <ol>
-          <li><p>List the connections:</p>
-            <div class="code"><div class="lbl">Terminal<button class="copy" type="button" data-copy="adb devices"></button></div><pre><span class="p">$ </span>adb devices</pre></div>
-            <p>You see something like:</p>
-            <div class="code"><pre>192.168.1.23:37099                              device
-adb-R5CX1234ABC-a1B2c3._adb-tls-connect._tcp    device</pre></div></li>
-          <li><p>Copy the first column of one line. This is the serial, for example <code>192.168.1.23:37099</code>.</p></li>
-          <li><p>Run the commands with <code>-s</code> and your serial right after <code>adb</code>:</p>
-            <div class="code"><div class="lbl">Turn on<button class="copy" type="button" data-copy="adb -s 192.168.1.23:37099 shell setprop debug.systemui.gaussblur_level 4 &amp;&amp; adb -s 192.168.1.23:37099 shell am crash com.android.systemui"></button></div><pre><span class="p">$ </span>adb -s 192.168.1.23:37099 shell setprop debug.systemui.gaussblur_level 4
-<span class="p">$ </span>adb -s 192.168.1.23:37099 shell am crash com.android.systemui</pre></div>
-            <p>To go back to glass, use <code>-1</code> instead of <code>4</code> in the first command.</p></li>
-        </ol>
-        <p>The serial changes after a phone restart or a Wi-Fi reconnect. If you get the error again, start over from step 1. The <code>matte.sh</code> and <code>matte.bat</code> scripts pick the first phone by themselves.</p>
+        <p>Your phone is listed twice. These commands pick the first one.</p>
+        <div class="os" role="tablist"><button type="button" role="tab" aria-selected="true" data-os="mac">Mac, Linux</button><button type="button" role="tab" aria-selected="false" data-os="win">Windows</button></div>
+        <div class="os-pane" data-os="mac"><div class="code"><div class="lbl">Turn on<button class="copy" type="button" data-copy="S=$(adb devices | awk &#x27;NR==2{print $1}&#x27;); adb -s $S shell setprop debug.systemui.gaussblur_level 4 &amp;&amp; adb -s $S shell am crash com.android.systemui"></button></div><pre><span class="p">$ </span>S=$(adb devices | awk 'NR==2{print $1}'); adb -s $S shell setprop debug.systemui.gaussblur_level 4 &amp;&amp; adb -s $S shell am crash com.android.systemui</pre></div><div class="code"><div class="lbl">Back to glass<button class="copy" type="button" data-copy="S=$(adb devices | awk &#x27;NR==2{print $1}&#x27;); adb -s $S shell setprop debug.systemui.gaussblur_level -1 &amp;&amp; adb -s $S shell am crash com.android.systemui"></button></div><pre><span class="p">$ </span>S=$(adb devices | awk 'NR==2{print $1}'); adb -s $S shell setprop debug.systemui.gaussblur_level -1 &amp;&amp; adb -s $S shell am crash com.android.systemui</pre></div></div>
+        <div class="os-pane" data-os="win" hidden><div class="code"><div class="lbl">Turn on (PowerShell)<button class="copy" type="button" data-copy="$S=(adb devices)[1].Split()[0]; adb -s $S shell setprop debug.systemui.gaussblur_level 4; adb -s $S shell am crash com.android.systemui"></button></div><pre><span class="p">&gt; </span>$S=(adb devices)[1].Split()[0]; adb -s $S shell setprop debug.systemui.gaussblur_level 4; adb -s $S shell am crash com.android.systemui</pre></div><div class="code"><div class="lbl">Back to glass (PowerShell)<button class="copy" type="button" data-copy="$S=(adb devices)[1].Split()[0]; adb -s $S shell setprop debug.systemui.gaussblur_level -1; adb -s $S shell am crash com.android.systemui"></button></div><pre><span class="p">&gt; </span>$S=(adb devices)[1].Split()[0]; adb -s $S shell setprop debug.systemui.gaussblur_level -1; adb -s $S shell am crash com.android.systemui</pre></div></div>
       </details>
       <details><summary>How do I undo it?</summary><p>Switch it off in Matte, run the turn-off command, or restart the phone.</p></details>
       <details><summary>Are there side effects?</summary><p>Other SystemUI blur goes flat too: shade background, Quick Settings, volume panel. The status bar flickers for a few seconds while switching.</p></details>
@@ -475,6 +467,11 @@ if (!still && "IntersectionObserver" in window) {
 }
 
 const copyIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a1 1 0 0 1 1-1h9"/></svg>';
+document.querySelectorAll(".os button").forEach(b => b.addEventListener("click", () => {
+  const d = b.closest("details");
+  d.querySelectorAll(".os button").forEach(x => x.setAttribute("aria-selected", x === b));
+  d.querySelectorAll(".os-pane").forEach(p => p.hidden = p.dataset.os !== b.dataset.os);
+}));
 document.querySelectorAll(".copy").forEach(b => {
   b.innerHTML = copyIcon + "Copy";
   b.addEventListener("click", async () => {
